@@ -59,6 +59,18 @@
         .topbar { background: white; border-bottom: 1px solid var(--border-color); padding: 10px 24px; display: flex; align-items: center; justify-content: flex-end; gap: 16px; position: sticky; top: 0; z-index: 50; }
         .btn-logout { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 8px; background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
         .btn-logout:hover { background: #DC2626; color: white; border-color: #DC2626; }
+         /* Copyright pojok kiri bawah website */
+        .website-copyright {
+            position: fixed;
+            bottom: 8px;
+            left: 12px;
+            font-size: 11px;
+            font-style: italic;
+            color: #94A3B8;
+            z-index: 40;
+            pointer-events: none;
+            user-select: none;
+        }
 
         @media print {
             @page { size: A4 portrait; margin: 1.5cm 1.5cm 2cm 1.5cm; }
@@ -83,12 +95,14 @@
             #print-content img { max-width: 50px !important; height: auto !important; }
             #print-content hr { border: none !important; margin: 8px 0 !important; }
             .tc { text-align: center !important; }
-            /* [DIUBAH] copyright cetak warna gray */
-            #print-content .print-copyright { font-size: 7pt !important; font-style: italic !important; color: gray !important; margin-top: 15px !important; text-align: left !important; }
+            .website-copyright { display: none !important; }        
         }
     </style>
 </head>
 <body>
+    
+    <!-- Copyright pojok kiri bawah website -->
+    <div class="website-copyright">@Copyright_Putu_BPS Kota Pekanbaru</div>
 
     <div id="login-screen" class="login-screen-wrapper">
         <div class="login-card-custom">
