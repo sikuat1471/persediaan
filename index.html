@@ -252,7 +252,37 @@
     function calcPemakaian(){var id=parseInt(document.getElementById('pemakaian-barang').value),jml=parseInt(document.getElementById('pemakaian-jumlah').value)||0,info=getFIFOPrice(id,jml);if(info){document.getElementById('pemakaian-harga').value=formatRp(info.avgPrice);document.getElementById('pemakaian-total').value=formatRp(info.totalCost);}else{document.getElementById('pemakaian-harga').value='Stok tidak cukup';document.getElementById('pemakaian-total').value='-';}}
     function savePemakaian(e){e.preventDefault();var eid=document.getElementById('pemakaian-id').value;if(eid){var idx=DB.pemakaian.findIndex(function(p){return p.id===parseInt(eid);});if(idx>=0){DB.pemakaian[idx].noBukti=document.getElementById('pemakaian-nobukti').value;DB.pemakaian[idx].tanggal=document.getElementById('pemakaian-tanggal').value;DB.pemakaian[idx].keterangan=document.getElementById('pemakaian-keterangan').value;}}else{var id=parseInt(document.getElementById('pemakaian-barang').value),jml=parseInt(document.getElementById('pemakaian-jumlah').value),info=getFIFOPrice(id,jml);if(!info){alert('Stok tidak cukup');return;}var rem=jml;for(var i=0;i<DB.fifoQueue[id].length;i++){if(rem<=0)break;var b=DB.fifoQueue[id][i];if(b.sisa>0){var t=Math.min(b.sisa,rem);b.sisa-=t;rem-=t;}}DB.pemakaian.push({id:Date.now(),noBukti:document.getElementById('pemakaian-nobukti').value,tanggal:document.getElementById('pemakaian-tanggal').value,itemId:id,jumlah:jml,saldo:getStock(id),harga:info.avgPrice,total:info.totalCost,keterangan:document.getElementById('pemakaian-keterangan').value});}saveDatabase();closeModal('pemakaian-modal');loadPemakaianTable();}
     function editPemakaian(id){openModal('pemakaian-modal');var p=DB.pemakaian.find(function(x){return x.id===id;});document.getElementById('pemakaian-id').value=p.id;document.getElementById('pemakaian-nobukti').value=p.noBukti;document.getElementById('pemakaian-tanggal').value=p.tanggal;document.getElementById('pemakaian-barang').value=p.itemId;var it=DB.barang.find(function(x){return x.id===p.itemId;});if(it)document.getElementById('pemakaian-satuan').value=it.satuan;document.getElementById('pemakaian-jumlah').value=p.jumlah;document.getElementById('pemakaian-barang').disabled=true;document.getElementById('pemakaian-jumlah').disabled=true;document.getElementById('pemakaian-keterangan').value=p.keterangan;updateSaldoInfo();document.getElementById('pemakaian-harga').value=formatRp(p.harga);document.getElementById('pemakaian-total').value=formatRp(p.total);}
-    function deletePemakaian(id){if(confirm('Hapus?')){DB.pemakaian=DB.pemakaian.filter(function(p){return p.id!==id;});saveDatabase();loadPemakaianTable();}}
+    function deletePemakaian(id){
+    if(!confirm('Hapus pemakaian ini? Stok akan dikembalikan otomatis.'))return;
+    /* 1. Hapus record pemakaian dari array */
+    DB.pemakaian = DB.pemakaian.filter(function(p){return p.id !== id});
+    /* 2. Bangun ulang FIFO queue dari nol (saldo awal + pembelian + transfer) */
+    buildFIFOQueue();
+    /* 3. Terapkan kembali semua pemakaian yang tersisa secara berurutan */
+    DB.pemakaian.slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)}).forEach(function(pk){
+        var rem = pk.jumlah;
+        if(DB.fifoQueue[pk.itemId]){
+            for(var i=0; i<DB.fifoQueue[pk.itemId].length; i++){
+                if(rem <= 0) break;
+                var b = DB.fifoQueue[pk.itemId][i];
+                if(b.sisa > 0){
+                    var t = Math.min(b.sisa, rem);
+                    b.sisa -= t;
+                    rem -= t;
+                }
+            }
+        }
+        /* Perbarui kolom saldo di record pemakaian agar akurat */
+        pk.saldo = getStock(pk.itemId);
+    });
+    /* 4. Simpan & refresh tampilan */
+    saveDatabase();
+    loadPemakaianTable();
+    /* Juga refresh halaman lain yang bergantung pada stok */
+    loadStockTable();
+    loadBASOTable();
+    loadOpnameData();
+}
 
     function updateSatuanPermintaan(){var it=DB.barang.find(function(b){return b.id===parseInt(document.getElementById('permintaan-barang').value);});document.getElementById('permintaan-satuan').value=it?it.satuan:'';}
     function savePermintaan(e){e.preventDefault();var eid=document.getElementById('permintaan-id').value,d={noPermintaan:document.getElementById('permintaan-nopermintaan').value,tanggal:document.getElementById('permintaan-tanggal').value,itemId:parseInt(document.getElementById('permintaan-barang').value),jumlah:parseInt(document.getElementById('permintaan-jumlah').value)};if(eid){var idx=DB.permintaan.findIndex(function(p){return p.id===parseInt(eid);});if(idx>=0)Object.assign(DB.permintaan[idx],d);}else{DB.permintaan.push(Object.assign({id:Date.now(),status:'Menunggu'},d));}saveDatabase();closeModal('permintaan-modal');loadPermintaanTable();}
