@@ -313,6 +313,7 @@ function loadStockTb(){var f=DB.barang.filter(function(b){return getStock(b.id)>
 function loadBarangTb(){document.getElementById('barang-tbody').innerHTML=DB.barang.map(function(b,i){return'<tr><td class="tc">'+(i+1)+'</td><td class="font-medium text-slate-800">'+b.kode+'</td><td>'+b.deskripsi+'</td><td class="tc">'+b.satuan+'</td><td><div class="flex gap-1 justify-center"><button onclick="editBarang('+b.id+')" class="text-ocean-600 text-xs">Edit</button><button onclick="deleteBarang('+b.id+')" class="text-red-500 text-xs">Hapus</button></div></td></tr>'}).join('');loadDD()}
 
 /* ========== SALDO AWAL TABLE ========== */
+/* PERBAIKAN: colspan diubah dari 7 menjadi 6, ditambah <td></td> kosong untuk kolom Aksi */
 function loadSaTb(){
     var s=DB.saldoAwal.slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)});
     var gt=0,rows='',lastTg='',tgT=0,no=0;
@@ -326,13 +327,13 @@ function loadSaTb(){
         rows+='<tr><td class="tc">'+no+'</td>'+tgC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+r.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tr">'+fN(r.harga)+'</td><td class="tr font-semibold text-slate-800">'+fN(r.total)+'</td>'+acC+'</tr>';
         lastTg=tg;
     });
-    /* FIX BUG #4: colspan 6->7 (No+Tg+Barang+Jml+Sat+Harga=6 kolom sebelum Total) */
-    if(s.length)rows+='<tr class="row-total"><td colspan="6" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td></tr>';
+    /* colspan=6 menutup kolom: No, Tanggal, Nama Barang, Jumlah, Satuan, Harga Satuan */
+    /* lalu td kedua = kolom Total Harga (nilai), td ketiga = kolom Aksi (kosong) */
+    if(s.length)rows+='<tr class="row-total"><td colspan="6" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td><td></td></tr>';
     document.getElementById('saldoawal-tbody').innerHTML=rows||'<tr><td colspan="8" class="tc py-6 text-slate-400">Belum ada data</td></tr>'
 }
 
 /* ========== Grouped table renderer ========== */
-/* FIX BUG #1/#2/#3: colSpan disesuaikan per tipe */
 function renderGrp(tbodyId,dataArr,colSpan){
     var s=dataArr.slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)||(a.noBukti||'').localeCompare(b.noBukti||'')});
     var gt=0,rows='',lastNb='',nbT=0;
@@ -356,7 +357,6 @@ function renderGrp(tbodyId,dataArr,colSpan){
     var totalCols=colSpan+1+2;
     document.getElementById(tbodyId).innerHTML=rows||'<tr><td colspan="'+totalCols+'" class="tc py-6 text-slate-400">Belum ada data</td></tr>'
 }
-/* FIX: colSpan 7 untuk Pembelian & Transfer, 8 untuk Pemakaian */
 function loadPbTb(){renderGrp('pembelian-tbody',DB.pembelian,7)}
 function loadTfTb(){renderGrp('transfer-tbody',DB.transfer,7)}
 function loadPmTb(){renderGrp('pemakaian-tbody',DB.pemakaian,8)}
@@ -409,7 +409,6 @@ function calcPbGT(){var g=0;document.querySelectorAll('#pb-tbody tr').forEach(fu
 function savePbMulti(){
     var nb=document.getElementById('pb-nobukti').value.trim(),tg=document.getElementById('pb-tanggal').value,enb=document.getElementById('pb-edit-nb').value;
     if(!nb){alert('No Bukti wajib diisi');return}if(!tg){alert('Tanggal wajib diisi');return}
-    /* FIX BUG #8: validasi duplikat No Bukti */
     if(nbExists(DB.pembelian,nb,enb)){alert('No Bukti "'+nb+'" sudah digunakan! Gunakan No Bukti lain.');return}
     var rows=document.querySelectorAll('#pb-tbody tr');var err=false;
     rows.forEach(function(r){var ri=r.getAttribute('data-idx');if(!document.getElementById('pb-b-'+ri).value)err=true;if(!(parseInt(document.getElementById('pb-j-'+ri).value)>0))err=true;if(!(parseInt(document.getElementById('pb-h-'+ri).value)>=0))err=true});
@@ -471,12 +470,10 @@ function deletePmByNb(nb){if(!confirm('Hapus semua barang No Bukti "'+nb+'"?\nSt
 /* ========== CRUD BARANG ========== */
 function saveBarang(e){e.preventDefault();var id=document.getElementById('barang-id').value,d={kode:document.getElementById('barang-kode').value,deskripsi:document.getElementById('barang-deskripsi').value,satuan:document.getElementById('barang-satuan').value};if(id){var idx=DB.barang.findIndex(function(b){return b.id===parseInt(id)});DB.barang[idx]=Object.assign({},DB.barang[idx],d)}else{var nid=DB.barang.length?Math.max.apply(null,DB.barang.map(function(b){return b.id}))+1:1;DB.barang.push(Object.assign({id:nid},d));DB.fifoQueue[nid]=[]}buildFIFO();saveDB();closeModal('barang-modal');loadBarangTb()}
 function editBarang(id){openModal('barang-modal');document.getElementById('barang-modal-title').textContent='Edit Barang';var b=DB.barang.find(function(x){return x.id===id});document.getElementById('barang-id').value=b.id;document.getElementById('barang-kode').value=b.kode;document.getElementById('barang-deskripsi').value=b.deskripsi;document.getElementById('barang-satuan').value=b.satuan}
-/* FIX BUG #7: cek referensi sebelum hapus barang */
 function deleteBarang(id){var b=DB.barang.find(function(x){return x.id===id});if(barangInUse(id)){alert('Tidak dapat menghapus "'+b.deskripsi+'".\nBarang ini masih digunakan dalam transaksi (Saldo Awal, Pembelian, Transfer, Pemakaian, atau Permintaan).');return}if(confirm('Hapus barang "'+b.deskripsi+'"?')){DB.barang=DB.barang.filter(function(x){return x.id!==id});delete DB.fifoQueue[id];buildFIFO();saveDB();loadBarangTb()}}
 
 /* ========== CRUD PERMINTAAN ========== */
 function updateSatuanPermintaan(){var it=DB.barang.find(function(b){return b.id===parseInt(document.getElementById('permintaan-barang').value)});document.getElementById('permintaan-satuan').value=it?it.satuan:''}
-/* FIX BUG #9: validasi duplikat No Permintaan */
 function savePermintaan(e){e.preventDefault();var eid=document.getElementById('permintaan-id').value,noP=document.getElementById('permintaan-nopermintaan').value.trim();if(noP){var dup=DB.permintaan.find(function(p){return p.noPermintaan===noP&&(!eid||p.id!==parseInt(eid))});if(dup){alert('No Permintaan "'+noP+'" sudah digunakan!');return}}var d={noPermintaan:noP,tanggal:document.getElementById('permintaan-tanggal').value,itemId:parseInt(document.getElementById('permintaan-barang').value),jumlah:parseInt(document.getElementById('permintaan-jumlah').value)};if(eid){var idx=DB.permintaan.findIndex(function(p){return p.id===parseInt(eid)});if(idx>=0)Object.assign(DB.permintaan[idx],d)}else{DB.permintaan.push(Object.assign({id:Date.now(),status:'Menunggu'},d))}saveDB();closeModal('permintaan-modal');loadPermTb()}
 function editPerm(id){openModal('permintaan-modal');document.getElementById('permintaan-modal-title').textContent='Edit Permintaan';var p=DB.permintaan.find(function(x){return x.id===id});document.getElementById('permintaan-id').value=p.id;document.getElementById('permintaan-nopermintaan').value=p.noPermintaan;document.getElementById('permintaan-tanggal').value=p.tanggal;document.getElementById('permintaan-barang').value=p.itemId;updateSatuanPermintaan();document.getElementById('permintaan-jumlah').value=p.jumlah}
 function approvePerm(id){if(confirm('Setujui?')){var p=DB.permintaan.find(function(x){return x.id===id});if(p){p.status='Disetujui';saveDB();loadPermTb()}}}
@@ -508,7 +505,6 @@ function loadKartuKendali(){
 function openKartuPrintModal(){if(!parseInt(document.getElementById('kartu-barang').value)){alert('Pilih barang dulu');return}document.getElementById('kartu-sig-tanggal').value=today();openModal('kartu-print-modal')}
 
 /* ========== MODAL ========== */
-/* FIX BUG #6: daftar exclude untuk auto-set tanggal */
 var NO_AUTO_DATE_MODALS=['filter-keluar-modal','filter-date-modal','kartu-print-modal'];
 function openModal(id){
     document.getElementById(id).classList.add('active');
@@ -518,7 +514,6 @@ function openModal(id){
     if(id==='barang-modal')document.getElementById('barang-modal-title').textContent='Tambah Barang';
     if(id==='permintaan-modal')document.getElementById('permintaan-modal-title').textContent='Form Permintaan Barang';
     document.querySelectorAll('#'+id+' input[disabled]').forEach(function(el){el.disabled=false});
-    /* Hanya auto-set tanggal untuk modal yang bukan di exclude list */
     if(NO_AUTO_DATE_MODALS.indexOf(id)<0){
         var dt=document.getElementById(id).querySelector('input[type="date"]');
         if(dt)dt.value=today()
