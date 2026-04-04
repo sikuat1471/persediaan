@@ -178,8 +178,95 @@
     <!-- MODAL: FILTER DATE -->
     <div class="modal-overlay" id="filter-date-modal"><div class="modal-content" style="max-width:450px"><div class="flex justify-between items-center mb-4"><h3 class="font-display text-lg font-bold" id="filter-date-title">Filter Laporan</h3><button onclick="closeModal('filter-date-modal')" class="text-slate-400 hover:text-slate-600 text-xl">&times;</button></div><div class="space-y-4"><div><label class="block text-xs font-semibold text-slate-600 mb-2">Rentang Waktu</label><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs text-slate-500 mb-1">Tanggal Mulai</label><input type="date" id="filter-date-start" class="input-field"></div><div><label class="block text-xs text-slate-500 mb-1">Tanggal Akhir</label><input type="date" id="filter-date-end" class="input-field"></div></div></div><button onclick="generateDateReport()" class="btn-primary w-full mt-2">Proses & Cetak</button></div></div></div>
 
-    <!-- MODAL: FILTER KELUAR -->
-    <div class="modal-overlay" id="filter-keluar-modal"><div class="modal-content" style="max-width:450px"><div class="flex justify-between items-center mb-4"><h3 class="font-display text-lg font-bold">Bukti Pengeluaran</h3><button onclick="closeModal('filter-keluar-modal')" class="text-slate-400 hover:text-slate-600 text-xl">&times;</button></div><div class="space-y-3"><div><label class="block text-xs text-slate-500 mb-1">Pilih No Bukti</label><select class="input-field" id="filter-keluar-select"></select></div><div><label class="block text-xs text-slate-500 mb-1">Tanggal Cetak <span class="text-red-500">*</span></label><input type="date" id="sig-tanggal" class="input-field"></div><hr class="my-2"><div><label class="block text-xs text-slate-500 mb-1">Ditujukan Kepada</label><input type="text" id="sig-ditujukan" class="input-field" placeholder="Kepala Bagian Umum"></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs text-slate-500 mb-1">Dikeluarkan Oleh</label><input type="text" id="sig-dikeluarkan" class="input-field"></div><div><label class="block text-xs text-slate-500 mb-1">Diterima Oleh</label><input type="text" id="sig-diterima" class="input-field"></div></div><div><label class="block text-xs text-slate-500 mb-1">Mengetahui</label><input type="text" id="sig-mengetahui" class="input-field"></div><button onclick="generateKeluarReport()" class="btn-primary w-full mt-2">Cetak Sekarang</button></div></div></div>
+    <!-- MODAL: FILTER KELUAR (BUKTI PENGELUARAN) -->
+    <div class="modal-overlay" id="filter-keluar-modal">
+        <div class="modal-content" style="max-width:480px">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-display text-lg font-bold">Bukti Pengeluaran</h3>
+                <button onclick="closeModal('filter-keluar-modal')" class="text-slate-400 hover:text-slate-600 text-xl">&times;</button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs text-slate-500 mb-1">Pilih No Bukti</label>
+                    <select class="input-field" id="filter-keluar-select" onchange="onKeluarNbChange()"></select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-500 mb-1">Tanggal Cetak <span class="text-red-500">*</span></label>
+                    <input type="date" id="sig-tanggal" class="input-field">
+                </div>
+                <hr class="my-2">
+                <div>
+                    <label class="block text-xs text-slate-500 mb-1">Ditujukan Kepada</label>
+                    <select class="input-field" id="sig-ditujukan">
+                        <option value="">-- Pilih --</option>
+                        <option value="Sub Bagian Umum">Sub Bagian Umum</option>
+                        <option value="Statistik Sosial">Statistik Sosial</option>
+                        <option value="Statistik Distribusi">Statistik Distribusi</option>
+                        <option value="Statistik Produksi">Statistik Produksi</option>
+                        <option value="Nerwilis">Nerwilis</option>
+                        <option value="IPDS">IPDS</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-500 mb-1">Dikeluarkan Oleh</label>
+                        <input type="text" id="sig-dikeluarkan" class="input-field" value="I Putu Diastudi">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-500 mb-1">Diterima Oleh</label>
+                        <select class="input-field" id="sig-diterima">
+                            <option value="">-- Pilih --</option>
+                            <option value="Arie Nurlaela, A.Md., S.Stat">Arie Nurlaela, A.Md., S.Stat</option>
+                            <option value="Aulia Hasif, SST, M.Si">Aulia Hasif, SST, M.Si</option>
+                            <option value="Benny Dwi Kifana, ST, M.Si">Benny Dwi Kifana, ST, M.Si</option>
+                            <option value="Callista Luthfiyah Cahyani, S.Tr.Stat">Callista Luthfiyah Cahyani, S.Tr.Stat</option>
+                            <option value="Danang Gunawan, A.Md">Danang Gunawan, A.Md</option>
+                            <option value="Desi Damaiyanti, SST, M.E">Desi Damaiyanti, SST, M.E</option>
+                            <option value="Dessy Syukriya Aryati, SST">Dessy Syukriya Aryati, SST</option>
+                            <option value="Erika Sari, SST">Erika Sari, SST</option>
+                            <option value="Erlius Natalis Bancin">Erlius Natalis Bancin</option>
+                            <option value="Erwhin Widyanto, S.E">Erwhin Widyanto, S.E</option>
+                            <option value="Fajar Maulinda, SST, M.E.K.K">Fajar Maulinda, SST, M.E.K.K</option>
+                            <option value="Guswandi, SST">Guswandi, SST</option>
+                            <option value="Hari Pebriyanto">Hari Pebriyanto</option>
+                            <option value="I Putu Diastudi">I Putu Diastudi</option>
+                            <option value="Ifra Warnita, SST, M.E.K.K">Ifra Warnita, SST, M.E.K.K</option>
+                            <option value="Imelda Andriani, SST">Imelda Andriani, SST</option>
+                            <option value="Ira Maharisa, SE, MM">Ira Maharisa, SE, MM</option>
+                            <option value="Lola Netty, S.Stat">Lola Netty, S.Stat</option>
+                            <option value="Mangatur Manurung, S.Si, M.Si">Mangatur Manurung, S.Si, M.Si</option>
+                            <option value="Marlis, SE">Marlis, SE</option>
+                            <option value="Meita Komalasari, S.ST, M.Si">Meita Komalasari, S.ST, M.Si</option>
+                            <option value="Musmuliadi, SE">Musmuliadi, SE</option>
+                            <option value="Mutiara Rintia Asnuri Putri, SST">Mutiara Rintia Asnuri Putri, SST</option>
+                            <option value="Nasrul Saputra, SST">Nasrul Saputra, SST</option>
+                            <option value="Nia Feriwati, S.Pt">Nia Feriwati, S.Pt</option>
+                            <option value="Noliza, SST">Noliza, SST</option>
+                            <option value="Nurul Handayani, S.Tr.Stat">Nurul Handayani, S.Tr.Stat</option>
+                            <option value="Oktaviani Armina">Oktaviani Armina</option>
+                            <option value="Poppi Rahma Nanda, S.Tr.Stat">Poppi Rahma Nanda, S.Tr.Stat</option>
+                            <option value="Razaliana, S.Sos">Razaliana, S.Sos</option>
+                            <option value="Reny Roswita Nazar, S.Stat">Reny Roswita Nazar, S.Stat</option>
+                            <option value="Rizka Heryanti, S.Tr.Stat">Rizka Heryanti, S.Tr.Stat</option>
+                            <option value="Rudiarman, SE">Rudiarman, SE</option>
+                            <option value="Sofi Zamzanah, S.Tr.Stat">Sofi Zamzanah, S.Tr.Stat</option>
+                            <option value="Suci Dwi Martiani, SST, M.I.Kom">Suci Dwi Martiani, SST, M.I.Kom</option>
+                            <option value="Sugiman, S.Kom">Sugiman, S.Kom</option>
+                            <option value="Sumarlin, A.Md">Sumarlin, A.Md</option>
+                            <option value="Ujang Nurhidayat, S.Kom">Ujang Nurhidayat, S.Kom</option>
+                            <option value="Wahyu Adhiputra, SST">Wahyu Adhiputra, SST</option>
+                            <option value="Yuli Hairani, SST">Yuli Hairani, SST</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-500 mb-1">Mengetahui</label>
+                    <input type="text" id="sig-mengetahui" class="input-field" value="Wahyu Adhiputra, SST">
+                </div>
+                <button onclick="generateKeluarReport()" class="btn-primary w-full mt-2">Cetak Sekarang</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL: KARTU PRINT -->
     <div class="modal-overlay" id="kartu-print-modal"><div class="modal-content" style="max-width:450px"><div class="flex justify-between items-center mb-4"><h3 class="font-display text-lg font-bold">Cetak Kartu Kendali</h3><button onclick="closeModal('kartu-print-modal')" class="text-slate-400 hover:text-slate-600 text-xl">&times;</button></div><div class="space-y-3"><div><label class="block text-xs text-slate-500 mb-1">Tanggal Cetak <span class="text-red-500">*</span></label><input type="date" id="kartu-sig-tanggal" class="input-field"></div><hr class="my-2"><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs text-slate-500 mb-1">Pengelola Persediaan</label><input type="text" id="kartu-sig-pengelola" class="input-field"></div><div><label class="block text-xs text-slate-500 mb-1">NIP</label><input type="text" id="kartu-sig-pengelola-nip" class="input-field"></div></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs text-slate-500 mb-1">Mengetahui</label><input type="text" id="kartu-sig-mengetahui" class="input-field"></div><div><label class="block text-xs text-slate-500 mb-1">NIP</label><input type="text" id="kartu-sig-mengetahui-nip" class="input-field"></div></div><button onclick="generateKartuReport()" class="btn-primary w-full mt-2">Cetak Sekarang</button></div></div></div>
@@ -276,6 +363,17 @@ function fN(n){return(n||0).toLocaleString('id-ID')}
 function fD(d){var dt=new Date(d);if(!d||isNaN(dt))return'-';return dt.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})}
 function today(){return new Date().toISOString().split('T')[0]}
 
+/* ========== AUTO-FILL TANGGAL SAAT PILIH NO BUKTI ========== */
+function onKeluarNbChange(){
+    var nb=document.getElementById('filter-keluar-select').value;
+    if(nb){
+        var item=DB.pemakaian.find(function(p){return p.noBukti===nb});
+        if(item){document.getElementById('sig-tanggal').value=item.tanggal}
+    }else{
+        document.getElementById('sig-tanggal').value='';
+    }
+}
+
 /* ========== DROPDOWNS ========== */
 function loadDD(){var all=DB.barang.map(function(b){return'<option value="'+b.id+'">'+b.deskripsi+'</option>'}).join('');['permintaan-barang','kartu-barang'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML='<option value="">-- Pilih --</option>'+all})}
 
@@ -298,30 +396,7 @@ function loadPermTb(){var cur=JSON.parse(sessionStorage.getItem('currentUser')),
 
 /* ========== HELPERS ========== */
 function makeOpts(){return DB.barang.map(function(b){return'<option value="'+b.id+'">'+b.deskripsi+'</option>'}).join('')}
-
-/*
- * PERBAIKAN UTAMA: makeAvailOpts(selId)
- * - Hanya menampilkan barang dengan stok > 0
- * - Jika selId diberikan (saat edit baris existing) dan stoknya sudah 0,
- *   barang tersebut tetap ditampilkan dengan label "(Stok Habis)" agar
- *   pengguna tahu barang apa yang sedang diedit
- */
-function makeAvailOpts(selId) {
-    var html = DB.barang.filter(function(b) {
-        return getStock(b.id) > 0;
-    }).map(function(b) {
-        var sel = (b.id === selId) ? ' selected' : '';
-        return '<option value="' + b.id + '"' + sel + '>' + b.deskripsi + '</option>';
-    }).join('');
-    /* Jika ada barang terpilih yang stoknya 0, tambahkan sebagai opsi terpisah */
-    if (selId) {
-        var item = DB.barang.find(function(b) { return b.id === selId; });
-        if (item && getStock(selId) <= 0) {
-            html += '<option value="' + selId + '" selected class="opt-habis">' + item.deskripsi + ' (Stok Habis)</option>';
-        }
-    }
-    return html;
-}
+function makeAvailOpts(selId){var html=DB.barang.filter(function(b){return getStock(b.id)>0}).map(function(b){var sel=(b.id===selId)?' selected':'';return'<option value="'+b.id+'"'+sel+'>'+b.deskripsi+'</option>'}).join('');if(selId){var item=DB.barang.find(function(b){return b.id===selId});if(item&&getStock(selId)<=0){html+='<option value="'+selId+'" selected class="opt-habis">'+item.deskripsi+' (Stok Habis)</option>'}}return html}
 
 /* ========== SALDO AWAL MULTI ========== */
 function generateSaNoBukti(){var max=0;DB.saldoAwal.forEach(function(sa){var m=sa.noBukti.match(/SA-(\d+)/);if(m)max=Math.max(max,parseInt(m[1]))});return'SA-'+String(max+1).padStart(3,'0')}
@@ -361,199 +436,16 @@ function editTf(nb){var items=DB.transfer.filter(function(x){return x.noBukti===
 function deleteTfByNb(nb){if(!confirm('Hapus semua barang No Bukti "'+nb+'"?'))return;DB.transfer=DB.transfer.filter(function(x){return x.noBukti!==nb});buildFIFO();saveDB();loadTfTb()}
 
 /* ========== PEMAKAIAN MULTI ========== */
-/*
- * PERBAIKAN: Dropdown pemakaian hanya menampilkan barang dengan stok > 0.
- * - Saat tambah baru: hanya barang stok > 0 yang muncul
- * - Saat edit: barang yang sedang diedit tetap muncul meski stok 0,
- *   dengan label "(Stok Habis)" agar pengguna tahu konteksnya
- */
-function openPmModal() {
-    pmC = 0;
-    document.getElementById('pm-edit-nb').value = '';
-    document.getElementById('pm-nobukti').value = '';
-    document.getElementById('pm-tanggal').value = today();
-    document.getElementById('pm-modal-title').textContent = 'Tambah Pemakaian';
-    document.getElementById('pm-tbody').innerHTML = '';
-    addPmRow();
-    openModal('pemakaian-modal');
-}
-
-function addPmRow(bid, jml, ket) {
-    pmC++;
-    var i = pmC;
-    var selId = bid ? parseInt(bid) : null;
-    var tr = document.createElement('tr');
-    tr.id = 'pm-r-' + i;
-    tr.setAttribute('data-idx', i);
-    tr.innerHTML = '<td class="tc" style="font-weight:600">' + i + '</td>'
-        + '<td><select class="input-field py-1" id="pm-b-' + i + '" onchange="updPmInfo(' + i + ')"><option value="">-- Pilih --</option>' + makeAvailOpts(selId) + '</select></td>'
-        + '<td><input type="number" class="input-field py-1 tc" id="pm-j-' + i + '" value="' + (jml || '') + '" min="1" oninput="calcPmFifo(' + i + ')"></td>'
-        + '<td><input type="text" class="input-field py-1 tc bg-slate-50 text-xs" id="pm-st-' + i + '" readonly value="-"></td>'
-        + '<td><input type="text" class="input-field py-1 tc bg-slate-50" id="pm-s-' + i + '" readonly></td>'
-        + '<td><input type="text" class="input-field py-1 tr bg-slate-50" id="pm-h-' + i + '" readonly value="-"></td>'
-        + '<td><input type="text" class="input-field py-1 tr bg-slate-50 font-semibold" id="pm-t-' + i + '" readonly value="-"></td>'
-        + '<td><input type="text" class="input-field py-1" id="pm-k-' + i + '" value="' + (ket || '') + '" placeholder="-"></td>'
-        + '<td class="tc"><button onclick="rmPmRow(' + i + ')" class="btn-danger-sm">&#10005;</button></td>';
-    document.getElementById('pm-tbody').appendChild(tr);
-    if (bid) updPmInfo(i);
-    renumPm();
-}
-
-function rmPmRow(i) {
-    if (document.querySelectorAll('#pm-tbody tr').length <= 1) { alert('Minimal 1 baris'); return; }
-    document.getElementById('pm-r-' + i).remove();
-    renumPm();
-    calcPmGT();
-}
-
-function renumPm() {
-    document.querySelectorAll('#pm-tbody tr').forEach(function(r, j) { r.cells[0].textContent = j + 1; });
-}
-
-function updPmInfo(i) {
-    var bid = parseInt(document.getElementById('pm-b-' + i).value),
-        it = DB.barang.find(function(b) { return b.id === bid; });
-    document.getElementById('pm-s-' + i).value = it ? it.satuan : '';
-    if (bid) {
-        var stk = getStock(bid);
-        document.getElementById('pm-st-' + i).value = stk + ' ' + (it ? it.satuan : '');
-        if (stk <= 0) {
-            document.getElementById('pm-st-' + i).value = '0 ' + (it ? it.satuan : '');
-        }
-    } else {
-        document.getElementById('pm-st-' + i).value = '-';
-    }
-    document.getElementById('pm-h-' + i).value = '-';
-    document.getElementById('pm-t-' + i).value = '-';
-    calcPmFifo(i);
-    calcPmGT();
-}
-
-function calcPmFifo(i) {
-    var bid = parseInt(document.getElementById('pm-b-' + i).value),
-        jml = parseInt(document.getElementById('pm-j-' + i).value) || 0;
-    if (!bid || !jml) {
-        document.getElementById('pm-h-' + i).value = '-';
-        document.getElementById('pm-t-' + i).value = '-';
-        calcPmGT();
-        return;
-    }
-    var info = getFIFO(bid, jml);
-    if (info) {
-        document.getElementById('pm-h-' + i).value = fRp(info.ap);
-        document.getElementById('pm-t-' + i).value = fRp(info.tc);
-    } else {
-        document.getElementById('pm-h-' + i).value = 'Stok tidak cukup';
-        document.getElementById('pm-t-' + i).value = '-';
-    }
-    calcPmGT();
-}
-
-function calcPmGT() {
-    var g = 0;
-    document.querySelectorAll('#pm-tbody tr').forEach(function(r) {
-        var ri = r.getAttribute('data-idx'),
-            bid = parseInt(document.getElementById('pm-b-' + ri).value),
-            jml = parseInt(document.getElementById('pm-j-' + ri).value) || 0;
-        if (bid && jml) {
-            var info = getFIFO(bid, jml);
-            if (info) g += info.tc;
-        }
-    });
-    document.getElementById('pm-gt').textContent = fRp(g);
-}
-
-function savePmMulti() {
-    var nb = document.getElementById('pm-nobukti').value.trim(),
-        tg = document.getElementById('pm-tanggal').value,
-        enb = document.getElementById('pm-edit-nb').value;
-    if (!nb) { alert('No Bukti wajib diisi'); return; }
-    if (!tg) { alert('Tanggal wajib diisi'); return; }
-    var rows = document.querySelectorAll('#pm-tbody tr');
-    var err = false, items = [];
-    rows.forEach(function(r) {
-        var ri = r.getAttribute('data-idx'),
-            bid = parseInt(document.getElementById('pm-b-' + ri).value),
-            jml = parseInt(document.getElementById('pm-j-' + ri).value) || 0;
-        if (!bid || !jml) err = true;
-        items.push({ bid: bid, jml: jml, ket: document.getElementById('pm-k-' + ri).value.trim() });
-    });
-    if (err) { alert('Lengkapi semua baris: barang dan jumlah wajib diisi'); return; }
-
-    /* Backup data lama jika sedang edit, lalu hapus dan rebuild FIFO */
-    var oldData = null;
-    if (enb) {
-        oldData = DB.pemakaian.filter(function(x) { return x.noBukti === enb; });
-        DB.pemakaian = DB.pemakaian.filter(function(x) { return x.noBukti !== enb; });
-        buildFIFO();
-    }
-
-    /* Validasi FIFO setelah data lama dihapus (stok sudah kembali) */
-    var valid = true, errorMsg = '';
-    items.forEach(function(it) {
-        if (it.bid && it.jml) {
-            var info = getFIFO(it.bid, it.jml);
-            if (!info) {
-                valid = false;
-                var barang = DB.barang.find(function(b) { return b.id === it.bid; });
-                errorMsg = 'Stok "' + (barang ? barang.deskripsi : '-') + '" tidak mencukupi.\nTersedia: ' + getStock(it.bid) + ', Dibutuhkan: ' + it.jml;
-            } else {
-                it.info = info;
-            }
-        }
-    });
-
-    if (!valid) {
-        if (oldData) {
-            oldData.forEach(function(d) { DB.pemakaian.push(d); });
-            buildFIFO();
-            saveDB();
-        }
-        alert(errorMsg);
-        return;
-    }
-
-    /* Simpan data baru */
-    var idC = Date.now();
-    items.forEach(function(it) {
-        idC++;
-        DB.pemakaian.push({
-            id: idC, noBukti: nb, tanggal: tg, itemId: it.bid,
-            jumlah: it.jml, saldo: 0, harga: it.info.ap, total: it.info.tc,
-            keterangan: it.ket
-        });
-    });
-
-    buildFIFO();
-    saveDB();
-    closeModal('pemakaian-modal');
-    loadPmTb();
-    loadStockTb();
-}
-
-function editPm(nb) {
-    var items = DB.pemakaian.filter(function(x) { return x.noBukti === nb; });
-    if (!items.length) return;
-    pmC = 0;
-    document.getElementById('pm-edit-nb').value = nb;
-    document.getElementById('pm-modal-title').textContent = 'Edit Pemakaian - ' + nb;
-    document.getElementById('pm-tbody').innerHTML = '';
-    openModal('pemakaian-modal');
-    document.getElementById('pm-nobukti').value = nb;
-    document.getElementById('pm-tanggal').value = items[0].tanggal;
-    items.forEach(function(it) {
-        addPmRow(it.itemId, it.jumlah, it.keterangan || '');
-    });
-}
-
-function deletePmByNb(nb) {
-    if (!confirm('Hapus semua barang No Bukti "' + nb + '"?\nStok akan dikembalikan otomatis.')) return;
-    DB.pemakaian = DB.pemakaian.filter(function(x) { return x.noBukti !== nb; });
-    buildFIFO();
-    saveDB();
-    loadPmTb();
-    loadStockTb();
-}
+function openPmModal(){pmC=0;document.getElementById('pm-edit-nb').value='';document.getElementById('pm-nobukti').value='';document.getElementById('pm-tanggal').value=today();document.getElementById('pm-modal-title').textContent='Tambah Pemakaian';document.getElementById('pm-tbody').innerHTML='';addPmRow();openModal('pemakaian-modal')}
+function addPmRow(bid,jml,ket){pmC++;var i=pmC;var selId=bid?parseInt(bid):null;var tr=document.createElement('tr');tr.id='pm-r-'+i;tr.setAttribute('data-idx',i);tr.innerHTML='<td class="tc" style="font-weight:600">'+i+'</td><td><select class="input-field py-1" id="pm-b-'+i+'" onchange="updPmInfo('+i+')"><option value="">-- Pilih --</option>'+makeAvailOpts(selId)+'</select></td><td><input type="number" class="input-field py-1 tc" id="pm-j-'+i+'" value="'+(jml||'')+'" min="1" oninput="calcPmFifo('+i+')"></td><td><input type="text" class="input-field py-1 tc bg-slate-50 text-xs" id="pm-st-'+i+'" readonly value="-"></td><td><input type="text" class="input-field py-1 tc bg-slate-50" id="pm-s-'+i+'" readonly></td><td><input type="text" class="input-field py-1 tr bg-slate-50" id="pm-h-'+i+'" readonly value="-"></td><td><input type="text" class="input-field py-1 tr bg-slate-50 font-semibold" id="pm-t-'+i+'" readonly value="-"></td><td><input type="text" class="input-field py-1" id="pm-k-'+i+'" value="'+(ket||'')+'" placeholder="-"></td><td class="tc"><button onclick="rmPmRow('+i+')" class="btn-danger-sm">&#10005;</button></td>';document.getElementById('pm-tbody').appendChild(tr);if(bid)updPmInfo(i);renumPm()}
+function rmPmRow(i){if(document.querySelectorAll('#pm-tbody tr').length<=1){alert('Minimal 1 baris');return}document.getElementById('pm-r-'+i).remove();renumPm();calcPmGT()}
+function renumPm(){document.querySelectorAll('#pm-tbody tr').forEach(function(r,j){r.cells[0].textContent=j+1})}
+function updPmInfo(i){var bid=parseInt(document.getElementById('pm-b-'+i).value),it=DB.barang.find(function(b){return b.id===bid});document.getElementById('pm-s-'+i).value=it?it.satuan:'';if(bid){var stk=getStock(bid);document.getElementById('pm-st-'+i).value=stk+' '+(it?it.satuan:'');if(stk<=0)document.getElementById('pm-st-'+i).value='0 '+(it?it.satuan:'')}else{document.getElementById('pm-st-'+i).value='-'}document.getElementById('pm-h-'+i).value='-';document.getElementById('pm-t-'+i).value='-';calcPmFifo(i);calcPmGT()}
+function calcPmFifo(i){var bid=parseInt(document.getElementById('pm-b-'+i).value),jml=parseInt(document.getElementById('pm-j-'+i).value)||0;if(!bid||!jml){document.getElementById('pm-h-'+i).value='-';document.getElementById('pm-t-'+i).value='-';calcPmGT();return}var info=getFIFO(bid,jml);if(info){document.getElementById('pm-h-'+i).value=fRp(info.ap);document.getElementById('pm-t-'+i).value=fRp(info.tc)}else{document.getElementById('pm-h-'+i).value='Stok tidak cukup';document.getElementById('pm-t-'+i).value='-'}calcPmGT()}
+function calcPmGT(){var g=0;document.querySelectorAll('#pm-tbody tr').forEach(function(r){var ri=r.getAttribute('data-idx'),bid=parseInt(document.getElementById('pm-b-'+ri).value),jml=parseInt(document.getElementById('pm-j-'+ri).value)||0;if(bid&&jml){var info=getFIFO(bid,jml);if(info)g+=info.tc}});document.getElementById('pm-gt').textContent=fRp(g)}
+function savePmMulti(){var nb=document.getElementById('pm-nobukti').value.trim(),tg=document.getElementById('pm-tanggal').value,enb=document.getElementById('pm-edit-nb').value;if(!nb){alert('No Bukti wajib diisi');return}if(!tg){alert('Tanggal wajib diisi');return}var rows=document.querySelectorAll('#pm-tbody tr');var err=false,items=[];rows.forEach(function(r){var ri=r.getAttribute('data-idx'),bid=parseInt(document.getElementById('pm-b-'+ri).value),jml=parseInt(document.getElementById('pm-j-'+ri).value)||0;if(!bid||!jml)err=true;items.push({bid:bid,jml:jml,ket:document.getElementById('pm-k-'+ri).value.trim()})});if(err){alert('Lengkapi semua baris: barang dan jumlah wajib diisi');return}var oldData=null;if(enb){oldData=DB.pemakaian.filter(function(x){return x.noBukti===enb});DB.pemakaian=DB.pemakaian.filter(function(x){return x.noBukti!==enb});buildFIFO()}var valid=true,errorMsg='';items.forEach(function(it){if(it.bid&&it.jml){var info=getFIFO(it.bid,it.jml);if(!info){valid=false;var barang=DB.barang.find(function(b){return b.id===it.bid});errorMsg='Stok "'+(barang?barang.deskripsi:'-')+'" tidak mencukupi.\nTersedia: '+getStock(it.bid)+', Dibutuhkan: '+it.jml}else{it.info=info}}});if(!valid){if(oldData){oldData.forEach(function(d){DB.pemakaian.push(d)});buildFIFO();saveDB()}alert(errorMsg);return}var idC=Date.now();items.forEach(function(it){idC++;DB.pemakaian.push({id:idC,noBukti:nb,tanggal:tg,itemId:it.bid,jumlah:it.jml,saldo:0,harga:it.info.ap,total:it.info.tc,keterangan:it.ket})});buildFIFO();saveDB();closeModal('pemakaian-modal');loadPmTb();loadStockTb()}
+function editPm(nb){var items=DB.pemakaian.filter(function(x){return x.noBukti===nb});if(!items.length)return;pmC=0;document.getElementById('pm-edit-nb').value=nb;document.getElementById('pm-modal-title').textContent='Edit Pemakaian - '+nb;document.getElementById('pm-tbody').innerHTML='';openModal('pemakaian-modal');document.getElementById('pm-nobukti').value=nb;document.getElementById('pm-tanggal').value=items[0].tanggal;items.forEach(function(it){addPmRow(it.itemId,it.jumlah,it.keterangan||'')})}
+function deletePmByNb(nb){if(!confirm('Hapus semua barang No Bukti "'+nb+'"?\nStok akan dikembalikan otomatis.'))return;DB.pemakaian=DB.pemakaian.filter(function(x){return x.noBukti!==nb});buildFIFO();saveDB();loadPmTb();loadStockTb()}
 
 /* ========== CRUD BARANG ========== */
 function saveBarang(e){e.preventDefault();var id=document.getElementById('barang-id').value,d={kode:document.getElementById('barang-kode').value,deskripsi:document.getElementById('barang-deskripsi').value,satuan:document.getElementById('barang-satuan').value};if(id){var idx=DB.barang.findIndex(function(b){return b.id===parseInt(id)});DB.barang[idx]=Object.assign({},DB.barang[idx],d)}else{var nid=DB.barang.length?Math.max.apply(null,DB.barang.map(function(b){return b.id}))+1:1;DB.barang.push(Object.assign({id:nid},d));DB.fifoQueue[nid]=[]}buildFIFO();saveDB();closeModal('barang-modal');loadBarangTb()}
@@ -590,15 +482,124 @@ function printOpname(){var tg=document.getElementById('opname-tanggal').value,lk
 function printPerm(noP){var items=DB.permintaan.filter(function(p){return p.noPermintaan===noP});if(!items.length){alert('Data tidak ditemukan');return}var rows=items.map(function(p){var it=DB.barang.find(function(b){return b.id===p.itemId});return'<tr><td class="tc">'+p.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td>'+(it?it.deskripsi:'-')+'</td></tr>'}).join('');document.getElementById('print-content').innerHTML='<h2>FORM PERMINTAAN BARANG</h2><table style="width:100%;font-size:9pt;margin-bottom:12px"><tr><td style="width:15%">No Permintaan</td><td style="width:2%">:</td><td style="width:33%">'+noP+'</td><td style="width:10%">Tanggal</td><td style="width:2%">:</td><td style="width:38%">'+fD(items[0].tanggal)+'</td></tr></table><table class="bt"><colgroup><col style="width:15%"><col style="width:12%"><col style="width:73%"></colgroup><thead><tr><th>Jumlah</th><th>Satuan</th><th>Nama Barang</th></tr></thead><tbody>'+rows+'</tbody></table><table style="width:100%;font-size:9pt;text-align:center;margin-top:40px"><tr style="vertical-align:top"><td style="width:50%"><div style="margin-bottom:40px">Yang Meminta,</div><div style="font-weight:bold;text-decoration:underline">(.....................)</div></td><td style="width:50%"><div style="margin-bottom:40px">Disetujui Oleh,</div><div style="font-weight:bold;text-decoration:underline">(.....................)</div></td></tr></table>';document.getElementById('print-title').innerText='Form Permintaan';openPrintModal()}
 
 function openDateFilterModal(type){CRT=type;var t={masuk:'Laporan Transaksi Masuk',keluar:'Laporan Pemakaian',pembelian:'Laporan Pembelian'};document.getElementById('filter-date-title').innerText=t[type];document.getElementById('filter-date-start').value='';document.getElementById('filter-date-end').value='';openModal('filter-date-modal')}
-function openKeluarFilterModal(){var sel=document.getElementById('filter-keluar-select'),u=[];DB.pemakaian.forEach(function(p){if(u.indexOf(p.noBukti)<0)u.push(p.noBukti)});sel.innerHTML='<option value="">-- Pilih --</option>'+u.map(function(n){return'<option value="'+n+'">'+n+'</option>'}).join('');openModal('filter-keluar-modal')}
-function generateDateReport(){var s=document.getElementById('filter-date-start').value,e=document.getElementById('filter-date-end').value;if(!s||!e){alert('Tanggal wajib diisi');return}if(new Date(s)>new Date(e)){alert('Tanggal mulai lebih besar');return}var title='',dr='',cls='bt font-small';if(CRT==='masuk'){title='LAPORAN TRANSAKSI MASUK';var pb=DB.pembelian.filter(function(p){return p.tanggal>=s&&p.tanggal<=e}).map(function(p){return Object.assign({},p,{type:'Pembelian',it:DB.barang.find(function(b){return b.id===p.itemId})})});var tf=DB.transfer.filter(function(t){return t.tanggal>=s&&t.tanggal<=e}).map(function(t){return Object.assign({},t,{type:'Transfer',it:DB.barang.find(function(b){return b.id===t.itemId})})});var all=pb.concat(tf).sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)});var gt=0;dr=all.map(function(d,i){gt+=d.total;return'<tr><td class="tc">'+(i+1)+'</td><td class="tc">'+fD(d.tanggal)+'</td><td class="tc">'+d.noBukti+'</td><td>'+(d.it?d.it.deskripsi:'-')+'</td><td class="tc">'+d.jumlah+'</td><td class="tc">'+(d.it?d.it.satuan:'-')+'</td><td class="tr">'+fN(d.harga)+'</td><td class="tr">'+fN(d.total)+'</td></tr>'}).join('');if(all.length)dr+='<tr style="background:#e8e8e8;font-weight:bold"><td colspan="7" class="tr" style="padding-right:4px">TOTAL</td><td class="tr">'+fN(gt)+'</td></tr>'}else if(CRT==='keluar'){title='LAPORAN TRANSAKSI KELUAR (PEMAKAIAN)';var fl=DB.pemakaian.filter(function(p){return p.tanggal>=s&&p.tanggal<=e}).sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)});var gt=0;dr=fl.map(function(p,i){var it=DB.barang.find(function(b){return b.id===p.itemId});gt+=p.total;return'<tr><td class="tc">'+(i+1)+'</td><td class="tc">'+fD(p.tanggal)+'</td><td class="tc">'+p.noBukti+'</td><td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+p.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tr">'+fN(p.harga)+'</td><td class="tr">'+fN(p.total)+'</td></tr>'}).join('');if(fl.length)dr+='<tr style="background:#e8e8e8;font-weight:bold"><td colspan="7" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td></tr>'}else if(CRT==='pembelian'){title='LAPORAN PEMBELIAN';var fl2=DB.pembelian.filter(function(p){return p.tanggal>=s&&p.tanggal<=e}).sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)});var gt=0;dr=fl2.map(function(p,i){var it=DB.barang.find(function(b){return b.id===p.itemId});gt+=p.total;return'<tr><td class="tc">'+(i+1)+'</td><td class="tc">'+fD(p.tanggal)+'</td><td class="tc">'+p.noBukti+'</td><td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+p.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tr">'+fN(p.harga)+'</td><td class="tr">'+fN(p.total)+'</td></tr>'}).join('');if(fl2.length)dr+='<tr style="background:#e8e8e8;font-weight:bold"><td colspan="7" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td></tr>'}if(!dr){alert('Tidak ada data');return}document.getElementById('print-content').innerHTML='<h2>'+title+'</h2><p>Periode: '+fD(s)+' s.d. '+fD(e)+'</p><table class="'+cls+'"><colgroup><col style="width:4%"><col style="width:11%"><col style="width:12%"><col style="width:26%"><col style="width:7%"><col style="width:8%"><col style="width:15%"><col style="width:15%"></colgroup><thead><tr><th>No</th><th>Tanggal</th><th>No Bukti</th><th>Nama Barang</th><th>Jumlah</th><th>Satuan</th><th>Harga Satuan (Rp.)</th><th>Total Harga (Rp.)</th></tr></thead><tbody>'+dr+'</tbody></table>';document.getElementById('print-title').innerText=title;closeModal('filter-date-modal');openPrintModal()}
 
-function generateKeluarReport(){var nb=document.getElementById('filter-keluar-select').value;if(!nb){alert('Pilih No Bukti');return}var data=DB.pemakaian.filter(function(p){return p.noBukti===nb});if(!data.length){alert('Data tidak ditemukan');return}var sigT=document.getElementById('sig-tanggal').value,tc=sigT?new Date(sigT).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'............',dj=document.getElementById('sig-ditujukan').value||'............',dk=document.getElementById('sig-dikeluarkan').value||'',dt=document.getElementById('sig-diterima').value||'',mk=document.getElementById('sig-mengetahui').value||'';var rows=data.map(function(p,i){var it=DB.barang.find(function(b){return b.id===p.itemId});return'<tr><td class="tc">'+(i+1)+'</td><td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tc">'+p.jumlah+'</td><td style="font-size:7.5pt">'+(p.keterangan||'-')+'</td></tr>'}).join('');document.getElementById('print-content').innerHTML='<div style="text-align:center;margin-bottom:8px"><div style="font-size:11pt;font-weight:bold">BADAN PUSAT STATISTIK</div><div style="font-size:9pt">KOTA PEKANBARU</div></div><h2 style="text-decoration:underline">BUKTI PENGELUARAN BARANG</h2><table style="width:100%;font-size:9pt;margin-bottom:10px"><tr style="vertical-align:top"><td style="width:60%">Nomor: <strong>'+nb+'</strong><br>Ditujukan kepada: '+dj+'</td><td style="width:40%;text-align:right">Pekanbaru, '+tc+'</td></tr></table><table class="bt"><colgroup><col style="width:5%"><col style="width:35%"><col style="width:10%"><col style="width:10%"><col style="width:40%"></colgroup><thead><tr><th>No</th><th>Nama Barang</th><th>Satuan</th><th>Jumlah</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table><table style="width:100%;font-size:9pt;text-align:center;margin-top:30px"><tr style="vertical-align:top"><td style="width:33%"><div style="margin-bottom:40px">Dikeluarkan Oleh,</div><div style="font-weight:bold;text-decoration:underline">'+(dk||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:40px">Diterima Oleh,</div><div style="font-weight:bold;text-decoration:underline">'+(dt||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:40px">Mengetahui,</div><div style="font-weight:bold;text-decoration:underline">'+(mk||'&nbsp;')+'</div></td></tr></table>';document.getElementById('print-title').innerText='Bukti Pengeluaran';closeModal('filter-keluar-modal');openPrintModal()}
+/* ========== BUKTI PENGELUARAN - MODAL OPEN & GENERATE ========== */
+function openKeluarFilterModal(){
+    var sel=document.getElementById('filter-keluar-select'),u=[];
+    DB.pemakaian.forEach(function(p){if(u.indexOf(p.noBukti)<0)u.push(p.noBukti)});
+    sel.innerHTML='<option value="">-- Pilih --</option>'+u.map(function(n){return'<option value="'+n+'">'+n+'</option>'}).join('');
+    document.getElementById('sig-tanggal').value='';
+    document.getElementById('sig-ditujukan').value='';
+    document.getElementById('sig-dikeluarkan').value='I Putu Diastudi';
+    document.getElementById('sig-diterima').value='';
+    document.getElementById('sig-mengetahui').value='Wahyu Adhiputra, SST';
+    openModal('filter-keluar-modal');
+}
 
-function generateKartuReport(){var sigT=document.getElementById('kartu-sig-tanggal').value,tc=sigT?new Date(sigT).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'............',pg=document.getElementById('kartu-sig-pengelola').value||'............',pgN=document.getElementById('kartu-sig-pengelola-nip').value||'............',mk=document.getElementById('kartu-sig-mengetahui').value||'............',mkN=document.getElementById('kartu-sig-mengetahui-nip').value||'............',iid=parseInt(document.getElementById('kartu-barang').value),item=DB.barang.find(function(x){return x.id===iid}),bv=document.getElementById('kartu-bulan').value,tv=document.getElementById('kartu-tahun').value,pTxt='Semua Periode',odS='-';if(bv&&tv){pTxt=document.getElementById('kartu-bulan').options[document.getElementById('kartu-bulan').selectedIndex].text+' '+tv;odS=fD(new Date(parseInt(tv),parseInt(bv)-1,1))}var trs=[];DB.saldoAwal.filter(function(sa){return sa.itemId===iid}).forEach(function(sa){trs.push({tgl:sa.tanggal,ur:'Saldo Awal',m:sa.jumlah,k:0,ket:sa.keterangan||'Stok awal',sd:new Date(sa.tanggal)})});DB.pembelian.filter(function(p){return p.itemId===iid}).forEach(function(p){trs.push({tgl:p.tanggal,ur:'Pembelian',m:p.jumlah,k:0,ket:p.keterangan,sd:new Date(p.tanggal)})});DB.transfer.filter(function(t){return t.itemId===iid}).forEach(function(t){trs.push({tgl:t.tanggal,ur:'Transfer Masuk',m:t.jumlah,k:0,ket:t.keterangan,sd:new Date(t.tanggal)})});DB.pemakaian.filter(function(p){return p.itemId===iid}).forEach(function(p){trs.push({tgl:p.tanggal,ur:'Pemakaian ('+p.noBukti+')',m:0,k:p.jumlah,ket:p.keterangan,sd:new Date(p.tanggal)})});trs.sort(function(a,b){return a.sd-b.sd});var disp=[],ob=0,no=1;if(bv&&tv){var stD=new Date(parseInt(tv),parseInt(bv)-1,1),enD=new Date(parseInt(tv),parseInt(bv),0,23,59,59);trs.forEach(function(t){if(t.sd<stD)ob+=(t.m-t.k)});trs.forEach(function(t){if(t.sd>=stD&&t.sd<=enD)disp.push(t)})}else disp=trs;var sisa=ob,rows='';if(bv&&tv)rows+='<tr style="background:#f0f0f0"><td class="tc">'+(no++)+'</td><td class="tc">'+odS+'</td><td style="font-weight:bold">Saldo Awal</td><td class="tc">-</td><td class="tc">-</td><td class="tc" style="font-weight:bold">'+sisa+'</td><td>Per 1 '+pTxt+'</td></tr>';disp.forEach(function(t){sisa+=t.m-t.k;rows+='<tr><td class="tc">'+(no++)+'</td><td class="tc">'+fD(t.sd)+'</td><td>'+t.ur+'</td><td class="tc">'+(t.m||'-')+'</td><td class="tc">'+(t.k||'-')+'</td><td class="tc">'+sisa+'</td><td>'+(t.ket||'-')+'</td></tr>'});document.getElementById('print-content').innerHTML='<table style="width:100%;border-collapse:collapse;margin-bottom:12px"><tr><td style="width:60px;text-align:center;vertical-align:middle;padding-right:10px"><img src="https://z-cdn-media.chatglm.cn/files/b8bffa74-ccd7-43df-ac0a-7d38232e3901.png?auth_key=1872868863-b6cd966dc51a4c34aa738032b487a895-0-e6beed34fb7fb9a9650976366f590c26" style="width:50px;height:auto"></td><td style="text-align:left;vertical-align:middle"><div style="font-size:11pt;font-weight:bold">BADAN PUSAT STATISTIK</div><div style="font-size:10pt">KOTA PEKANBARU</div></td></tr></table><h2 style="margin-top:10px;margin-bottom:15px;text-decoration:underline">KARTU KENDALI BARANG PERSEDIAAN</h2><table style="width:100%;font-size:10px;margin-bottom:15px;border-collapse:collapse"><tr><td style="width:15%">Nama Barang:</td><td style="width:35%;font-weight:bold;padding-left:10px">'+(item?item.deskripsi:'-')+'</td><td style="width:10%"></td><td style="width:15%;text-align:right;padding-right:10px">Bulan:</td><td style="width:25%;font-weight:bold;text-align:right">'+pTxt+'</td></tr></table><table class="bt"><colgroup><col style="width:5%"><col style="width:11%"><col style="width:22%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:32%"></colgroup><thead><tr><th>No</th><th>Tanggal</th><th>Uraian</th><th>Masuk</th><th>Keluar</th><th>Sisa</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin-top:30px;text-align:center;font-size:10px"><table style="width:100%;border-collapse:collapse"><tr style="vertical-align:top"><td style="width:50%"><div style="height:1.2em">&nbsp;</div><div style="margin-bottom:50px">Pengelola Persediaan,</div><div style="font-weight:bold">'+pg+'</div><div>NIP. '+pgN+'</div></td><td style="width:50%"><div>Pekanbaru, '+tc+'</div><div style="margin-bottom:50px">Mengetahui,</div><div style="font-weight:bold">'+mk+'</div><div>NIP. '+mkN+'</div></td></tr></table></div>';document.getElementById('print-title').innerText='Kartu Kendali';closeModal('kartu-print-modal');openPrintModal()}
+function generateKeluarReport(){
+    var nb=document.getElementById('filter-keluar-select').value;
+    if(!nb){alert('Pilih No Bukti');return}
+    var data=DB.pemakaian.filter(function(p){return p.noBukti===nb});
+    if(!data.length){alert('Data tidak ditemukan');return}
+    var sigT=document.getElementById('sig-tanggal').value,
+        tc=sigT?new Date(sigT).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'............',
+        dj=document.getElementById('sig-ditujukan').value||'............',
+        dk=document.getElementById('sig-dikeluarkan').value||'',
+        dt=document.getElementById('sig-diterima').value||'',
+        mk=document.getElementById('sig-mengetahui').value||'';
+    var rows=data.map(function(p,i){
+        var it=DB.barang.find(function(b){return b.id===p.itemId});
+        return'<tr><td class="tc">'+(i+1)+'</td><td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tc">'+p.jumlah+'</td><td style="font-size:7.5pt">'+(p.keterangan||'-')+'</td></tr>'
+    }).join('');
+    document.getElementById('print-content').innerHTML='<div style="text-align:center;margin-bottom:8px"><div style="font-size:11pt;font-weight:bold">BADAN PUSAT STATISTIK</div><div style="font-size:9pt">KOTA PEKANBARU</div></div><h2 style="text-decoration:underline">BUKTI PENGELUARAN BARANG</h2><table style="width:100%;font-size:9pt;margin-bottom:10px"><tr style="vertical-align:top"><td style="width:60%">Nomor: <strong>'+nb+'</strong><br>Ditujukan kepada: '+dj+'</td><td style="width:40%;text-align:right">Pekanbaru, '+tc+'</td></tr></table><table class="bt"><colgroup><col style="width:5%"><col style="width:35%"><col style="width:10%"><col style="width:10%"><col style="width:40%"></colgroup><thead><tr><th>No</th><th>Nama Barang</th><th>Satuan</th><th>Jumlah</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table><table style="width:100%;font-size:9pt;text-align:center;margin-top:30px"><tr style="vertical-align:top"><td style="width:33%"><div style="margin-bottom:40px">Dikeluarkan Oleh,</div><div style="font-weight:bold;text-decoration:underline">'+(dk||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:40px">Diterima Oleh,</div><div style="font-weight:bold;text-decoration:underline">'+(dt||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:40px">Mengetahui,</div><div style="font-weight:bold;text-decoration:underline">'+(mk||'&nbsp;')+'</div></td></tr></table>';
+    document.getElementById('print-title').innerText='Bukti Pengeluaran';
+    closeModal('filter-keluar-modal');
+    openPrintModal();
+}
+
+function generateDateReport(){
+    var s=document.getElementById('filter-date-start').value,e=document.getElementById('filter-date-end').value;
+    if(!s||!e){alert('Tanggal wajib diisi');return}
+    if(new Date(s)>new Date(e)){alert('Tanggal mulai lebih besar');return}
+    var title='',dr='',cls='bt font-small';
+    if(CRT==='masuk'){
+        title='LAPORAN TRANSAKSI MASUK';
+        var pb=DB.pembelian.filter(function(p){return p.tanggal>=s&&p.tanggal<=e}).map(function(p){return Object.assign({},p,{type:'Pembelian',it:DB.barang.find(function(b){return b.id===p.itemId})})});
+        var tf=DB.transfer.filter(function(t){return t.tanggal>=s&&t.tanggal<=e}).map(function(t){return Object.assign({},t,{type:'Transfer',it:DB.barang.find(function(b){return b.id===t.itemId})})});
+        var all=pb.concat(tf).sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)});
+        var gt=0;
+        dr=all.map(function(d,i){gt+=d.total;return'<tr><td class="tc">'+(i+1)+'</td><td class="tc">'+fD(d.tanggal)+'</td><td class="tc">'+d.noBukti+'</td><td>'+(d.it?d.it.deskripsi:'-')+'</td><td class="tc">'+d.jumlah+'</td><td class="tc">'+(d.it?d.it.satuan:'-')+'</td><td class="tr">'+fN(d.harga)+'</td><td class="tr">'+fN(d.total)+'</td></tr>'}).join('');
+        if(all.length)dr+='<tr style="background:#e8e8e8;font-weight:bold"><td colspan="7" class="tr" style="padding-right:4px">TOTAL</td><td class="tr">'+fN(gt)+'</td></tr>'
+    }else if(CRT==='keluar'){
+        title='LAPORAN TRANSAKSI KELUAR (PEMAKAIAN)';
+        var fl=DB.pemakaian.filter(function(p){return p.tanggal>=s&&p.tanggal<=e}).sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)});
+        var gt=0;
+        dr=fl.map(function(p,i){var it=DB.barang.find(function(b){return b.id===p.itemId});gt+=p.total;return'<tr><td class="tc">'+(i+1)+'</td><td class="tc">'+fD(p.tanggal)+'</td><td class="tc">'+p.noBukti+'</td><td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+p.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tr">'+fN(p.harga)+'</td><td class="tr">'+fN(p.total)+'</td></tr>'}).join('');
+        if(fl.length)dr+='<tr style="background:#e8e8e8;font-weight:bold"><td colspan="7" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td></tr>'
+    }else if(CRT==='pembelian'){
+        title='LAPORAN PEMBELIAN';
+        var fl2=DB.pembelian.filter(function(p){return p.tanggal>=s&&p.tanggal<=e}).sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)});
+        var gt=0;
+        dr=fl2.map(function(p,i){var it=DB.barang.find(function(b){return b.id===p.itemId});gt+=p.total;return'<tr><td class="tc">'+(i+1)+'</td><td class="tc">'+fD(p.tanggal)+'</td><td class="tc">'+p.noBukti+'</td><td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+p.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tr">'+fN(p.harga)+'</td><td class="tr">'+fN(p.total)+'</td></tr>'}).join('');
+        if(fl2.length)dr+='<tr style="background:#e8e8e8;font-weight:bold"><td colspan="7" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td></tr>'
+    }
+    if(!dr){alert('Tidak ada data');return}
+    document.getElementById('print-content').innerHTML='<h2>'+title+'</h2><p>Periode: '+fD(s)+' s.d. '+fD(e)+'</p><table class="'+cls+'"><colgroup><col style="width:4%"><col style="width:11%"><col style="width:12%"><col style="width:26%"><col style="width:7%"><col style="width:8%"><col style="width:15%"><col style="width:15%"></colgroup><thead><tr><th>No</th><th>Tanggal</th><th>No Bukti</th><th>Nama Barang</th><th>Jumlah</th><th>Satuan</th><th>Harga Satuan (Rp.)</th><th>Total Harga (Rp.)</th></tr></thead><tbody>'+dr+'</tbody></table>';
+    document.getElementById('print-title').innerText=title;
+    closeModal('filter-date-modal');
+    openPrintModal();
+}
+
+function generateKartuReport(){
+    var sigT=document.getElementById('kartu-sig-tanggal').value,
+        tc=sigT?new Date(sigT).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'............',
+        pg=document.getElementById('kartu-sig-pengelola').value||'............',
+        pgN=document.getElementById('kartu-sig-pengelola-nip').value||'............',
+        mk=document.getElementById('kartu-sig-mengetahui').value||'............',
+        mkN=document.getElementById('kartu-sig-mengetahui-nip').value||'............',
+        iid=parseInt(document.getElementById('kartu-barang').value),
+        item=DB.barang.find(function(x){return x.id===iid}),
+        bv=document.getElementById('kartu-bulan').value,
+        tv=document.getElementById('kartu-tahun').value,
+        pTxt='Semua Periode',odS='-';
+    if(bv&&tv){pTxt=document.getElementById('kartu-bulan').options[document.getElementById('kartu-bulan').selectedIndex].text+' '+tv;odS=fD(new Date(parseInt(tv),parseInt(bv)-1,1))}
+    var trs=[];
+    DB.saldoAwal.filter(function(sa){return sa.itemId===iid}).forEach(function(sa){trs.push({tgl:sa.tanggal,ur:'Saldo Awal',m:sa.jumlah,k:0,ket:sa.keterangan||'Stok awal',sd:new Date(sa.tanggal)})});
+    DB.pembelian.filter(function(p){return p.itemId===iid}).forEach(function(p){trs.push({tgl:p.tanggal,ur:'Pembelian',m:p.jumlah,k:0,ket:p.keterangan,sd:new Date(p.tanggal)})});
+    DB.transfer.filter(function(t){return t.itemId===iid}).forEach(function(t){trs.push({tgl:t.tanggal,ur:'Transfer Masuk',m:t.jumlah,k:0,ket:t.keterangan,sd:new Date(t.tanggal)})});
+    DB.pemakaian.filter(function(p){return p.itemId===iid}).forEach(function(p){trs.push({tgl:p.tanggal,ur:'Pemakaian ('+p.noBukti+')',m:0,k:p.jumlah,ket:p.keterangan,sd:new Date(p.tanggal)})});
+    trs.sort(function(a,b){return a.sd-b.sd});
+    var disp=[],ob=0,no=1;
+    if(bv&&tv){var stD=new Date(parseInt(tv),parseInt(bv)-1,1),enD=new Date(parseInt(tv),parseInt(bv),0,23,59,59);trs.forEach(function(t){if(t.sd<stD)ob+=(t.m-t.k)});trs.forEach(function(t){if(t.sd>=stD&&t.sd<=enD)disp.push(t)})}else disp=trs;
+    var sisa=ob,rows='';
+    if(bv&&tv)rows+='<tr style="background:#f0f0f0"><td class="tc">'+(no++)+'</td><td class="tc">'+odS+'</td><td style="font-weight:bold">Saldo Awal</td><td class="tc">-</td><td class="tc">-</td><td class="tc" style="font-weight:bold">'+sisa+'</td><td>Per 1 '+pTxt+'</td></tr>';
+    disp.forEach(function(t){sisa+=t.m-t.k;rows+='<tr><td class="tc">'+(no++)+'</td><td class="tc">'+fD(t.sd)+'</td><td>'+t.ur+'</td><td class="tc">'+(t.m||'-')+'</td><td class="tc">'+(t.k||'-')+'</td><td class="tc">'+sisa+'</td><td>'+(t.ket||'-')+'</td></tr>'});
+    document.getElementById('print-content').innerHTML='<table style="width:100%;border-collapse:collapse;margin-bottom:12px"><tr><td style="width:60px;text-align:center;vertical-align:middle;padding-right:10px"><img src="https://z-cdn-media.chatglm.cn/files/b8bffa74-ccd7-43df-ac0a-7d38232e3901.png?auth_key=1872868863-b6cd966dc51a4c34aa738032b487a895-0-e6beed34fb7fb9a9650976366f590c26" style="width:50px;height:auto"></td><td style="text-align:left;vertical-align:middle"><div style="font-size:11pt;font-weight:bold">BADAN PUSAT STATISTIK</div><div style="font-size:10pt">KOTA PEKANBARU</div></td></tr></table><h2 style="margin-top:10px;margin-bottom:15px;text-decoration:underline">KARTU KENDALI BARANG PERSEDIAAN</h2><table style="width:100%;font-size:10px;margin-bottom:15px;border-collapse:collapse"><tr><td style="width:15%">Nama Barang:</td><td style="width:35%;font-weight:bold;padding-left:10px">'+(item?item.deskripsi:'-')+'</td><td style="width:10%"></td><td style="width:15%;text-align:right;padding-right:10px">Bulan:</td><td style="width:25%;font-weight:bold;text-align:right">'+pTxt+'</td></tr></table><table class="bt"><colgroup><col style="width:5%"><col style="width:11%"><col style="width:22%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:32%"></colgroup><thead><tr><th>No</th><th>Tanggal</th><th>Uraian</th><th>Masuk</th><th>Keluar</th><th>Sisa</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin-top:30px;text-align:center;font-size:10px"><table style="width:100%;border-collapse:collapse"><tr style="vertical-align:top"><td style="width:50%"><div style="height:1.2em">&nbsp;</div><div style="margin-bottom:50px">Pengelola Persediaan,</div><div style="font-weight:bold">'+pg+'</div><div>NIP. '+pgN+'</div></td><td style="width:50%"><div>Pekanbaru, '+tc+'</div><div style="margin-bottom:50px">Mengetahui,</div><div style="font-weight:bold">'+mk+'</div><div>NIP. '+mkN+'</div></td></tr></table></div>';
+    document.getElementById('print-title').innerText='Kartu Kendali';
+    closeModal('kartu-print-modal');
+    openPrintModal();
+}
 
 /* ========== NAVIGATION ========== */
-function showPage(page){var tm={'dashboard':'Dashboard','stock':'Daftar Stock','opname':'Opname Fisik','barang':'Mengelola Barang','saldoawal':'Saldo Awal','pembelian':'Pembelian','transfer':'Transfer Masuk','pemakaian':'Pemakaian','permintaan':'Form Permintaan','kartu':'Kartu Kendali','laporan':'Cetak Laporan'};document.title=(tm[page]||'SIPEDANG')+' - SIPEDANG';document.querySelectorAll('.page-content').forEach(function(p){p.classList.add('hidden')});document.getElementById('page-'+page).classList.remove('hidden');document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});var el=document.querySelector('[data-page="'+page+'"]');if(el)el.classList.add('active');if(page==='dashboard')loadDash();else if(page==='stock')loadStockTb();else if(page==='opname')loadOpnameData();else if(page==='barang')loadBarangTb();else if(page==='saldoawal')loadSaTb();else if(page==='pembelian')loadPbTb();else if(page==='transfer')loadTfTb();else if(page==='pemakaian')loadPmTb();else if(page==='permintaan')loadPermTb();else if(page==='kartu')loadKartuKendali()}
+function showPage(page){
+    var tm={'dashboard':'Dashboard','stock':'Daftar Stock','opname':'Opname Fisik','barang':'Mengelola Barang','saldoawal':'Saldo Awal','pembelian':'Pembelian','transfer':'Transfer Masuk','pemakaian':'Pemakaian','permintaan':'Form Permintaan','kartu':'Kartu Kendali','laporan':'Cetak Laporan'};
+    document.title=(tm[page]||'SIPEDANG')+' - SIPEDANG';
+    document.querySelectorAll('.page-content').forEach(function(p){p.classList.add('hidden')});
+    document.getElementById('page-'+page).classList.remove('hidden');
+    document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+    var el=document.querySelector('[data-page="'+page+'"]');
+    if(el)el.classList.add('active');
+    if(page==='dashboard')loadDash();
+    else if(page==='stock')loadStockTb();
+    else if(page==='opname')loadOpnameData();
+    else if(page==='barang')loadBarangTb();
+    else if(page==='saldoawal')loadSaTb();
+    else if(page==='pembelian')loadPbTb();
+    else if(page==='transfer')loadTfTb();
+    else if(page==='pemakaian')loadPmTb();
+    else if(page==='permintaan')loadPermTb();
+    else if(page==='kartu')loadKartuKendali();
+}
 function toggleSubmenu(id){document.getElementById(id).classList.toggle('hidden')}
 
 /* ========== SAMPLE DATA ========== */
@@ -649,12 +650,9 @@ function initSampleData(){
 
 /* ========== INIT APP ========== */
 function initApp(){
-    /* Isi dropdown tahun untuk kartu kendali */
     var ySel=document.getElementById('kartu-tahun'),y=new Date().getFullYear();
     for(var i=y;i>=y-5;i--){var o=document.createElement('option');o.value=i;o.textContent=i;ySel.appendChild(o)}
-    /* Muat semua dropdown barang */
     loadDD();
-    /* Muat dashboard (halaman pertama yang tampil) */
     loadDash();
 }
 
