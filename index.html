@@ -327,7 +327,7 @@ function loadSaTb(){
         lastTg=tg;
     });
     /* FIX BUG #4: colspan 6->7 (No+Tg+Barang+Jml+Sat+Harga=6 kolom sebelum Total) */
-    if(s.length)rows+='<tr class="row-total"><td colspan="7" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td></tr>';
+    if(s.length)rows+='<tr class="row-total"><td colspan="6" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td></tr>';
     document.getElementById('saldoawal-tbody').innerHTML=rows||'<tr><td colspan="8" class="tc py-6 text-slate-400">Belum ada data</td></tr>'
 }
 
