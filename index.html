@@ -511,7 +511,21 @@ function generateKeluarReport(){
         var it=DB.barang.find(function(b){return b.id===p.itemId});
         return'<tr><td class="tc">'+(i+1)+'</td><td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tc">'+p.jumlah+'</td><td style="font-size:7.5pt">'+(p.keterangan||'-')+'</td></tr>'
     }).join('');
-    document.getElementById('print-content').innerHTML='<div style="text-align:center;margin-bottom:8px"><div style="font-size:11pt;font-weight:bold">BADAN PUSAT STATISTIK</div><div style="font-size:9pt">KOTA PEKANBARU</div></div><h2 style="text-decoration:underline">BUKTI PENGELUARAN BARANG</h2><table style="width:100%;font-size:9pt;margin-bottom:10px"><tr style="vertical-align:top"><td style="width:60%">Nomor: <strong>'+nb+'</strong><br>Ditujukan kepada: '+dj+'</td><td style="width:40%;text-align:right">Pekanbaru, '+tc+'</td></tr></table><table class="bt"><colgroup><col style="width:5%"><col style="width:35%"><col style="width:10%"><col style="width:10%"><col style="width:40%"></colgroup><thead><tr><th>No</th><th>Nama Barang</th><th>Satuan</th><th>Jumlah</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table><table style="width:100%;font-size:9pt;text-align:center;margin-top:30px"><tr style="vertical-align:top"><td style="width:33%"><div style="margin-bottom:40px">Dikeluarkan Oleh,</div><div style="font-weight:bold;text-decoration:underline">'+(dk||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:40px">Diterima Oleh,</div><div style="font-weight:bold;text-decoration:underline">'+(dt||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:40px">Mengetahui,</div><div style="font-weight:bold;text-decoration:underline">'+(mk||'&nbsp;')+'</div></td></tr></table>';
+    document.getElementById('print-content').innerHTML=
+        '<table style="width:100%;border-collapse:collapse;margin-bottom:8px"><tr>'+
+            '<td style="width:55px;text-align:center;vertical-align:middle;padding-right:8px">'+
+                '<img src="https://z-cdn-media.chatglm.cn/files/b8bffa74-ccd7-43df-ac0a-7d38232e3901.png?auth_key=1872868863-b6cd966dc51a4c34aa738032b487a895-0-e6beed34fb7fb9a9650976366f590c26" style="width:48px;height:auto">'+
+            '</td>'+
+            '<td style="text-align:left;vertical-align:middle">'+
+                '<div style="font-size:11pt;font-weight:bold;line-height:1.3">BADAN PUSAT STATISTIK</div>'+
+                '<div style="font-size:9.5pt;line-height:1.3">KOTA PEKANBARU</div>'+
+            '</td>'+
+        '</tr></table>'+
+        '<h2 style="text-decoration:underline;margin-bottom:px">BUKTI PENGELUARAN BARANG</h2>'+
+        '<table style="width:100%;font-size:9pt;margin-bottom:10px"><tr style="vertical-align:top"><td style="width:60%">Nomor: <strong>'+nb+'</strong><br>Ditujukan kepada: '+dj+'</td><td style="width:40%;text-align:right">Pekanbaru, '+tc+'</td></tr></table>'+
+        '<table class="bt"><colgroup><col style="width:5%"><col style="width:35%"><col style="width:10%"><col style="width:10%"><col style="width:40%"></colgroup><thead><tr><th>No</th><th>Nama Barang</th><th>Satuan</th><th>Jumlah</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+        '<div style="margin-top:40px"></div>'+
+        '<table style="width:100%;font-size:9pt;text-align:center"><tr style="vertical-align:top"><td style="width:33%"><div style="margin-bottom:50px">Dikeluarkan Oleh,</div><div style="font-weight:bold;text-decoration:underline">'+(dk||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:50px">Diterima Oleh,</div><div style="font-weight:bold;text-decoration:underline">'+(dt||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:50px">Mengetahui,</div><div style="font-weight:bold;text-decoration:underline">'+(mk||'&nbsp;')+'</div></td></tr></table>';
     document.getElementById('print-title').innerText='Bukti Pengeluaran';
     closeModal('filter-keluar-modal');
     openPrintModal();
