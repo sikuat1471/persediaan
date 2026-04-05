@@ -54,33 +54,100 @@
         .detail-table input,.detail-table select{font-size:12px;padding:5px 8px}
         .nb-group-start td:first-child{border-top:2px solid #BAE6FD}
         .opt-habis{color:#9CA3AF;font-style:italic}
-        @media print{
-            @page{size:A4 portrait;margin:1.5cm 1.5cm 2cm 1.5cm}
-            html,body{margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:10pt!important}
-            body>*:not(#print-modal){display:none!important}
-            #print-modal{display:block!important;position:static!important;inset:auto!important;width:100%!important;height:auto!important;max-height:none!important;background:none!important;backdrop-filter:none!important;opacity:1!important;visibility:visible!important;overflow:visible!important;margin:0!important;padding:0!important;z-index:auto!important}
-            #print-modal>.modal-content{display:block!important;position:static!important;max-width:100%!important;width:100%!important;border:none!important;border-radius:0!important;box-shadow:none!important;padding:0!important;transform:none!important;background:#fff!important;max-height:none!important;overflow:visible!important}
-            #print-modal .no-print{display:none!important}
-            #print-content{width:100%!important;padding:0!important;margin:0!important;border:none!important;box-shadow:none!important;background:#fff!important;overflow:visible!important;max-height:none!important}
-            #print-content,#print-content *{color:#000!important}
-            #print-content table{width:100%!important;overflow:visible!important;margin:0!important}
-            #print-content .bt{table-layout:auto!important;border:1px solid #000!important}
-            #print-content thead{display:table-header-group!important}
-            #print-content tbody tr{page-break-inside:avoid!important}
-            #print-content th{background-color:#d9d9d9!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:8px 4px!important;font-size:9pt!important;font-weight:bold!important;text-align:center!important;vertical-align:middle!important;line-height:1.3!important}
-            #print-content td{padding:4px 4px!important;font-size:8.5pt!important;vertical-align:middle!important;word-wrap:break-word!important;overflow-wrap:break-word!important;line-height:1.3!important}
-            #print-content .font-small td{font-size:7.5pt!important;padding:3px 3px!important}
-            #print-content .font-small th{font-size:7.5pt!important;padding:4px 3px!important}
-            #print-content .bt{border-collapse:separate!important;border-spacing:0!important;border:0.1pt solid #000!important;table-layout:auto!important}
-            #print-content .bt th,#print-content .bt td{border:0.1pt solid #000!important}
-            #print-content .bt{border:1px solid #000!important}
-            #print-content .bt *{box-sizing:border-box!important}
-            #print-content h2{font-size:14pt!important;font-weight:bold!important;text-align:center!important;margin:20px 0 10px 0!important;line-height:2.4!important}
-            #print-content p{font-size:9pt!important;margin:3px 0!important;line-height:1.4!important}
-            #print-content div{overflow:visible!important}
-            #print-content img{max-width:100px!important;height:auto!important}
-            .tc{text-align:center!important}.website-copyright{display:none!important}
-        }
+        @media print {
+    @page {
+        size: A4 portrait;
+        margin: 1.5cm 1.5cm 2cm 1.5cm;
+    }
+
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-size: 10pt !important;
+    }
+
+    body > *:not(#print-modal) { display: none !important; }
+
+    #print-modal {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        background: none !important;
+        overflow: visible !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        z-index: auto !important;
+    }
+
+    #print-modal > .modal-content {
+        display: block !important;
+        position: static !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        background: #fff !important;
+        overflow: visible !important;
+        max-height: none !important;
+    }
+
+    #print-content {
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        max-height: none !important;
+    }
+
+    #print-content, #print-content * { color: #000 !important; }
+
+    #print-content .bt {
+        border-collapse: collapse !important;
+        border: 0.25pt solid #444 !important;
+        table-layout: auto !important;
+        width: 100% !important;
+    }
+
+    #print-content .bt th, #print-content .bt td {
+        border: 0.25pt solid #444 !important;
+        padding: 4px !important;
+        font-size: 8.5pt !important;
+        vertical-align: middle !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        line-height: 1.3 !important;
+    }
+
+    #print-content .bt th {
+        background-color: #d9d9d9 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        font-weight: bold !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        font-size: 9pt !important;
+        line-height: 1.3 !important;
+        padding: 6px 4px !important;
+    }
+
+    #print-content thead { display: table-header-group !important; }
+    #print-content tbody tr { page-break-inside: avoid !important; }
+
+    #print-title,
+    button,
+    .no-print,
+    .website-copyright {
+        display: none !important;
+    }
+
+    .tc { text-align: center !important; }
+}
     </style>
 </head>
 <body>
@@ -313,7 +380,6 @@ function loadStockTb(){var f=DB.barang.filter(function(b){return getStock(b.id)>
 function loadBarangTb(){document.getElementById('barang-tbody').innerHTML=DB.barang.map(function(b,i){return'<tr><td class="tc">'+(i+1)+'</td><td class="font-medium text-slate-800">'+b.kode+'</td><td>'+b.deskripsi+'</td><td class="tc">'+b.satuan+'</td><td><div class="flex gap-1 justify-center"><button onclick="editBarang('+b.id+')" class="text-ocean-600 text-xs">Edit</button><button onclick="deleteBarang('+b.id+')" class="text-red-500 text-xs">Hapus</button></div></td></tr>'}).join('');loadDD()}
 
 /* ========== SALDO AWAL TABLE ========== */
-/* PERBAIKAN: colspan diubah dari 7 menjadi 6, ditambah <td></td> kosong untuk kolom Aksi */
 function loadSaTb(){
     var s=DB.saldoAwal.slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)});
     var gt=0,rows='',lastTg='',tgT=0,no=0;
@@ -327,8 +393,6 @@ function loadSaTb(){
         rows+='<tr><td class="tc">'+no+'</td>'+tgC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+r.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tr">'+fN(r.harga)+'</td><td class="tr font-semibold text-slate-800">'+fN(r.total)+'</td>'+acC+'</tr>';
         lastTg=tg;
     });
-    /* colspan=6 menutup kolom: No, Tanggal, Nama Barang, Jumlah, Satuan, Harga Satuan */
-    /* lalu td kedua = kolom Total Harga (nilai), td ketiga = kolom Aksi (kosong) */
     if(s.length)rows+='<tr class="row-total"><td colspan="6" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td><td></td></tr>';
     document.getElementById('saldoawal-tbody').innerHTML=rows||'<tr><td colspan="8" class="tc py-6 text-slate-400">Belum ada data</td></tr>'
 }
@@ -502,7 +566,7 @@ function loadKartuKendali(){
     disp.forEach(function(t){sisa+=t.m-t.k;rows+='<tr><td class="tc">'+(no++)+'</td><td class="tc">'+fD(t.tgl)+'</td><td>'+t.ur+'</td><td class="tc text-ocean-600 font-medium">'+(t.m||'-')+'</td><td class="tc text-red-500 font-medium">'+(t.k||'-')+'</td><td class="tc font-bold text-slate-800">'+sisa+'</td><td>'+(t.ket||'-')+'</td></tr>'});
     tb.innerHTML=rows
 }
-function openKartuPrintModal(){if(!parseInt(document.getElementById('kartu-barang').value)){alert('Pilih barang dulu');return}document.getElementById('kartu-sig-tanggal').value=today();openModal('kartu-print-modal')}
+function openKartuPrintModal(){if(!parseInt(document.getElementById('kartu-barang').value)){alert('Pilih barang dulu');return}document.getElementById('kartu-sig-tanggal').value=today();document.getElementById('kartu-sig-pengelola').value='I Putu Diastudi';document.getElementById('kartu-sig-pengelola-nip').value='197504272007101001';document.getElementById('kartu-sig-mengetahui').value='Wahyu Adhiputra, SST';document.getElementById('kartu-sig-mengetahui-nip').value='198611092010121008';openModal('kartu-print-modal')}
 
 /* ========== MODAL ========== */
 var NO_AUTO_DATE_MODALS=['filter-keluar-modal','filter-date-modal','kartu-print-modal'];
@@ -563,11 +627,11 @@ function generateKeluarReport(){
             '<td style="width:65px;text-align:center;vertical-align:middle;padding-right:8px"><img src="https://z-cdn-media.chatglm.cn/files/b8bffa74-ccd7-43df-ac0a-7d38232e3901.png?auth_key=1872868863-b6cd966dc51a4c34aa738032b487a895-0-e6beed34fb7fb9a9650976366f590c26" style="width:55px;height:auto"></td>'+
             '<td style="text-align:left;vertical-align:middle"><div style="font-size:15pt;font-weight:bold;line-height:1.3">BADAN PUSAT STATISTIK</div><div style="font-size:13.5pt;line-height:1.3">KOTA PEKANBARU</div></td>'+
         '</tr></table>'+
-        '<h2 style="text-decoration:underline;margin-top:20px;margin-bottom:12px">BUKTI PENGELUARAN BARANG</h2>'+
-        '<table style="width:100%;font-size:9pt;margin-bottom:10px"><tr style="vertical-align:top"><td style="width:60%">Nomor: <strong>'+nb+'</strong><br>Ditujukan kepada: '+dj+'</td><td style="width:40%;text-align:right">Pekanbaru, '+tc+'</td></tr></table>'+
+        '<h2 style="text-align:center; font-weight:bold; font-size:14pt; text-decoration:underline; margintop:20px; margin-bottom:12px;">BUKTI PENGELUARAN BARANG</h2>'+
+        '<table style="width:100%;font-size:9pt;margin-bottom:10px"><tr style="vertical-align:top"><td style="width:60%">'+'Nomor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&ensp;&ensp;&nbsp;&nbsp;: <strong>'+nb+'</strong><br>'+'Ditujukan kepada&nbsp: '+dj+'</td><td style="width:40%;text-align:right">Pekanbaru, '+tc+'</td></tr></table>'+
         '<table class="bt"><colgroup><col style="width:5%"><col style="width:45%"><col style="width:10%"><col style="width:10%"><col style="width:25%"></colgroup><thead><tr><th>No</th><th>Nama Barang</th><th>Satuan</th><th>Jumlah</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table>'+
         '<div style="margin-top:40px"></div>'+
-        '<table style="width:100%;font-size:9pt;text-align:center"><tr style="vertical-align:top"><td style="width:33%"><div style="margin-bottom:50px">Dikeluarkan Oleh,</div><div style="font-size:10pt;font-weight:bold;text-decoration:underline">'+(dk||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:50px">Diterima Oleh,</div><div style="font-size:10pt;font-weight:bold;text-decoration:underline">'+(dt||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:50px">Mengetahui,</div><div style="font-size:10pt;font-weight:bold;text-decoration:underline">'+(mk||'&nbsp;')+'</div></td></tr></table>';
+        '<table style="width:100%;font-size:9pt;text-align:center"><tr style="vertical-align:top"><td style="width:33%"><div style="margin-bottom:50px">Mengetahui,</div><div style="font-size:10pt;font-weight:bold;text-decoration:underline">'+(mk||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:50px">Diterima Oleh,</div><div style="font-size:10pt;font-weight:bold;text-decoration:underline">'+(dt||'&nbsp;')+'</div></td><td style="width:33%"><div style="margin-bottom:50px">Dikeluarkan Oleh,</div><div style="font-size:10pt;font-weight:bold;text-decoration:underline">'+(dk||'&nbsp;')+'</div></td></tr></table>';
     document.getElementById('print-title').innerText='Bukti Pengeluaran';
     closeModal('filter-keluar-modal');
     openPrintModal();
@@ -630,7 +694,57 @@ function generateKartuReport(){
     var sisa=ob,rows='';
     if(bv&&tv)rows+='<tr style="background:#f0f0f0"><td class="tc">'+(no++)+'</td><td class="tc">'+odS+'</td><td style="font-weight:bold">Saldo Awal</td><td class="tc">-</td><td class="tc">-</td><td class="tc" style="font-weight:bold">'+sisa+'</td><td>Per 1 '+pTxt+'</td></tr>';
     disp.forEach(function(t){sisa+=t.m-t.k;rows+='<tr><td class="tc">'+(no++)+'</td><td class="tc">'+fD(t.sd)+'</td><td>'+t.ur+'</td><td class="tc">'+(t.m||'-')+'</td><td class="tc">'+(t.k||'-')+'</td><td class="tc">'+sisa+'</td><td>'+(t.ket||'-')+'</td></tr>'});
-    document.getElementById('print-content').innerHTML='<table style="width:100%;border-collapse:collapse;margin-bottom:12px"><tr><td style="width:60px;text-align:center;vertical-align:middle;padding-right:10px"><img src="https://z-cdn-media.chatglm.cn/files/b8bffa74-ccd7-43df-ac0a-7d38232e3901.png?auth_key=1872868863-b6cd966dc51a4c34aa738032b487a895-0-e6beed34fb7fb9a9650976366f590c26" style="width:50px;height:auto"></td><td style="text-align:left;vertical-align:middle"><div style="font-size:11pt;font-weight:bold">BADAN PUSAT STATISTIK</div><div style="font-size:10pt">KOTA PEKANBARU</div></td></tr></table><h2 style="margin-top:10px;margin-bottom:15px;text-decoration:underline">KARTU KENDALI BARANG PERSEDIAAN</h2><table style="width:100%;font-size:10px;margin-bottom:15px;border-collapse:collapse"><tr><td style="width:15%">Nama Barang:</td><td style="width:35%;font-weight:bold;padding-left:10px">'+(item?item.deskripsi:'-')+'</td><td style="width:10%"></td><td style="width:15%;text-align:right;padding-right:10px">Bulan:</td><td style="width:25%;font-weight:bold;text-align:right">'+pTxt+'</td></tr></table><table class="bt"><colgroup><col style="width:5%"><col style="width:11%"><col style="width:22%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:32%"></colgroup><thead><tr><th>No</th><th>Tanggal</th><th>Uraian</th><th>Masuk</th><th>Keluar</th><th>Sisa</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin-top:30px;text-align:center;font-size:10px"><table style="width:100%;border-collapse:collapse"><tr style="vertical-align:top"><td style="width:50%"><div style="height:1.2em">&nbsp;</div><div style="margin-bottom:50px">Pengelola Persediaan,</div><div style="font-weight:bold">'+pg+'</div><div>NIP. '+pgN+'</div></td><td style="width:50%"><div>Pekanbaru, '+tc+'</div><div style="margin-bottom:50px">Mengetahui,</div><div style="font-weight:bold">'+mk+'</div><div>NIP. '+mkN+'</div></td></tr></table></div>';
+    document.getElementById('print-content').innerHTML =
+'<table style="width:100%;border-collapse:collapse;margin-bottom:12px">'+
+    '<tr>'+
+        '<td style="width:60px;text-align:center;vertical-align:middle;padding-right:10px">'+
+            '<img src="https://z-cdn-media.chatglm.cn/files/b8bffa74-ccd7-43df-ac0a-7d38232e3901.png?auth_key=1872868863-b6cd966dc51a4c34aa738032b487a895-0-e6beed34fb7fb9a9650976366f590c26" style="width:65px;height:auto">'+
+        '</td>'+
+        '<td style="text-align:left;vertical-align:middle">'+
+            '<div style="font-size:15pt;font-weight:bold">BADAN PUSAT STATISTIK</div>'+
+            '<div style="font-size:13pt">KOTA PEKANBARU</div>'+
+        '</td>'+
+    '</tr>'+
+'</table>'+
+
+'<h2 style="text-align:center; font-weight:bold; font-size:14pt; text-decoration:underline; margin-top:30px; margin-bottom:15px;">'+
+    'KARTU KENDALI BARANG PERSEDIAAN'+
+'</h2>'+
+
+'<table style="width:100%;font-size:10px;margin-bottom:10px;border-collapse:collapse">'+
+    '<tr>'+
+        '<td style="width:10%">Nama Barang:</td>'+
+        '<td style="width:35%;font-weight:bold;padding-left:10px">'+(item?item.deskripsi:'-')+'</td>'+
+        '<td style="width:10%"></td>'+
+        '<td style="width:33%;text-align:right;padding-right:10px">Bulan:</td>'+
+        '<td style="width:25%;font-weight:bold;text-align:right">'+pTxt+'</td>'+
+    '</tr>'+
+'</table>'+
+
+'<table class="bt">'+
+    '<colgroup><col style="width:5%"><col style="width:11%"><col style="width:22%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:32%"></colgroup>'+
+    '<thead><tr><th>No</th><th>Tanggal</th><th>Uraian</th><th>Masuk</th><th>Keluar</th><th>Sisa</th><th>Keterangan</th></tr></thead>'+
+    '<tbody>'+rows+'</tbody>'+
+'</table>'+
+
+'<div style="margin-top:30px;text-align:center;font-size:10px">'+
+    '<table style="width:100%;border-collapse:collapse">'+
+        '<tr style="vertical-align:top">'+
+            '<td style="width:50%">'+
+                '<div style="height:1.3em">&nbsp;</div>'+
+                '<div style="margin-bottom:53px">Pengelola Persediaan,</div>'+
+                '<div style="font-weight:bold;text-decoration:underline">'+pg+'</div>'+
+                '<div>NIP. '+pgN+'</div>'+
+            '</td>'+
+            '<td style="width:50%">'+
+                '<div>Pekanbaru, '+tc+'</div>'+
+                '<div style="margin-bottom:50px">Mengetahui,</div>'+
+                '<div style="font-weight:bold;text-decoration:underline">'+mk+'</div>'+
+                '<div>NIP. '+mkN+'</div>'+
+            '</td>'+
+        '</tr>'+
+    '</table>'+
+'</div>';
     document.getElementById('print-title').innerText='Kartu Kendali';
     closeModal('kartu-print-modal');
     openPrintModal();
