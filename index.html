@@ -588,7 +588,17 @@ function loadKartuKendali(){
     disp.forEach(function(t){sisa+=t.m-t.k;rows+='<tr><td class="tc">'+(no++)+'</td><td class="tc">'+fD(t.tgl)+'</td><td>'+t.ur+'</td><td class="tc text-ocean-600 font-medium">'+(t.m||'-')+'</td><td class="tc text-red-500 font-medium">'+(t.k||'-')+'</td><td class="tc font-bold text-slate-800">'+sisa+'</td><td>'+(t.ket||'-')+'</td></tr>'});
     tb.innerHTML=rows
 }
-function openKartuPrintModal(){if(!parseInt(document.getElementById('kartu-barang').value)){alert('Pilih barang dulu');return}document.getElementById('kartu-sig-tanggal').value=today();document.getElementById('kartu-sig-pengelola').value='I Putu Diastudi';document.getElementById('kartu-sig-pengelola-nip').value='197504272007101001';document.getElementById('kartu-sig-mengetahui').value='Wahyu Adhiputra, SST';document.getElementById('kartu-sig-mengetahui-nip').value='198611092010121008';openModal('kartu-print-modal')}
+function openKartuPrintModal(){
+    if(!parseInt(document.getElementById('kartu-barang').value)){alert('Pilih barang dulu');return}
+    var bv=document.getElementById('kartu-bulan').value,tv=document.getElementById('kartu-tahun').value,tgl;
+    if(bv&&tv){var ld=new Date(parseInt(tv),parseInt(bv),0);tgl=ld.getFullYear()+'-'+String(ld.getMonth()+1).padStart(2,'0')+'-'+String(ld.getDate()).padStart(2,'0')}else{tgl=today()}
+    document.getElementById('kartu-sig-tanggal').value=tgl;
+    document.getElementById('kartu-sig-pengelola').value='I Putu Diastudi';
+    document.getElementById('kartu-sig-pengelola-nip').value='197504272007101001';
+    document.getElementById('kartu-sig-mengetahui').value='Wahyu Adhiputra, SST';
+    document.getElementById('kartu-sig-mengetahui-nip').value='198611092010121008';
+    openModal('kartu-print-modal')
+}
 
 /* ========== MODAL ========== */
 var NO_AUTO_DATE_MODALS=['filter-keluar-modal','filter-date-modal','kartu-print-modal'];
