@@ -365,8 +365,30 @@ function nbExists(arr,nb,excludeNb){return arr.some(function(x){return x.noBukti
 /* ========== AUTO-FILL TANGGAL SAAT PILIH NO BUKTI ========== */
 function onKeluarNbChange(){
     var nb=document.getElementById('filter-keluar-select').value;
-    if(nb){var item=DB.pemakaian.find(function(p){return p.noBukti===nb});if(item)document.getElementById('sig-tanggal').value=item.tanggal}
-    else{document.getElementById('sig-tanggal').value=''}
+    if(nb){
+        var item=DB.pemakaian.find(function(p){return p.noBukti===nb});
+        if(item){
+            document.getElementById('sig-tanggal').value=item.tanggal;
+            var ket=(item.keterangan||'').trim();
+            if(ket){
+                var sel=document.getElementById('sig-ditujukan');
+                var found=false;
+                for(var i=0;i<sel.options.length;i++){
+                    if(sel.options[i].value.toLowerCase()===ket.toLowerCase()){
+                        sel.value=sel.options[i].value;
+                        found=true;
+                        break;
+                    }
+                }
+                if(!found)sel.value='';
+            }else{
+                document.getElementById('sig-ditujukan').value='';
+            }
+        }
+    }else{
+        document.getElementById('sig-tanggal').value='';
+        document.getElementById('sig-ditujukan').value='';
+    }
 }
 
 /* ========== DROPDOWNS ========== */
