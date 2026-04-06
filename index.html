@@ -312,15 +312,71 @@ function loadStockTb(){var f=DB.barang.filter(function(b){return getStock(b.id)>
 function loadBarangTb(){document.getElementById('barang-tbody').innerHTML=DB.barang.map(function(b,i){return'<tr><td class="tc">'+(i+1)+'</td><td class="font-medium text-slate-800">'+b.kode+'</td><td>'+b.deskripsi+'</td><td class="tc">'+b.satuan+'</td><td><div class="flex gap-1 justify-center"><button onclick="editBarang('+b.id+')" class="text-ocean-600 text-xs">Edit</button><button onclick="deleteBarang('+b.id+')" class="text-red-500 text-xs">Hapus</button></div></td></tr>'}).join('');loadDD()}
 
 /* ==================== SALDO AWAL TABLE ==================== */
-function loadSaTb(){var s=DB.saldoAwal.slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)||(a.noBukti||'').localeCompare(b.noBukti||'')});var gt=0,rows='',lastNb='',nbT=0;s.forEach(function(r,i){gt+=r.total;var it=DB.barang.find(function(b){return b.id===r.itemId});var nb=r.noBukti||'-',isF=(nb!==lastNb);if(isF)nbT=s.filter(function(x){return(x.noBukti||'-')===nb}).length;var cls=isF?' nb-group-start nb-border-top':'';var nbC=isF?'<td class="font-medium text-slate-800" rowspan="'+nbT+'">'+nb+'</td>':'';var tgC=isF?'<td class="tc" rowspan="'+nbT+'">'+fD(r.tanggal)+'</td>':'';var acC=isF?'<td class="tc" rowspan="'+nbT+'"><div class="flex gap-1 justify-center"><button onclick="editSa(\''+nb+'\')" class="text-ocean-600 text-xs">Edit</button><button onclick="deleteSaByNb(\''+nb+'\')" class="text-red-500 text-xs">Hapus</button></div></td>':'';rows+='<tr class="'+cls+'"><td class="tc">'+(i+1)+'</td>'+nbC+tgC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+r.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tr">'+fN(r.harga)+'</td><td class="tr font-semibold text-slate-800">'+fN(r.total)+'</td>'+acC+'</tr>';lastNb=nb});if(s.length)rows+='<tr class="row-total"><td colspan="7" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td><td></td></tr>';document.getElementById('saldoawal-tbody').innerHTML=rows||'<tr><td colspan="9" class="tc py-6 text-slate-400">Belum ada data</td></tr>'}
+function loadSaTb(){
+    var s=DB.saldoAwal.slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)||(a.noBukti||'').localeCompare(b.noBukti||'')});
+    var gt=0,rows='',lastNb='',nbT=0,nbIdx=0;
+    s.forEach(function(r,i){
+        gt+=r.total;
+        var it=DB.barang.find(function(b){return b.id===r.itemId});
+        var nb=r.noBukti||'-',isF=(nb!==lastNb);
+        if(isF){nbIdx++;nbT=s.filter(function(x){return(x.noBukti||'-')===nb}).length}
+        var cls=isF?' nb-group-start nb-border-top':'';
+        var noC=isF?'<td class="tc font-medium" rowspan="'+nbT+'">'+nbIdx+'</td>':'';
+        var nbC=isF?'<td class="font-medium text-slate-800" rowspan="'+nbT+'">'+nb+'</td>':'';
+        var tgC=isF?'<td class="tc" rowspan="'+nbT+'">'+fD(r.tanggal)+'</td>':'';
+        var acC=isF?'<td class="tc" rowspan="'+nbT+'"><div class="flex gap-1 justify-center"><button onclick="editSa(\''+nb+'\')" class="text-ocean-600 text-xs">Edit</button><button onclick="deleteSaByNb(\''+nb+'\')" class="text-red-500 text-xs">Hapus</button></div></td>':'';
+        rows+='<tr class="'+cls+'">'+noC+nbC+tgC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+r.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tr">'+fN(r.harga)+'</td><td class="tr font-semibold text-slate-800">'+fN(r.total)+'</td>'+acC+'</tr>';
+        lastNb=nb;
+    });
+    if(s.length)rows+='<tr class="row-total"><td colspan="7" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td><td></td></tr>';
+    document.getElementById('saldoawal-tbody').innerHTML=rows||'<tr><td colspan="9" class="tc py-6 text-slate-400">Belum ada data</td></tr>';
+}
 
 /* ==================== GROUPED RENDERER (PB, TF) ==================== */
-function renderGrp(tbodyId,dataArr,colSpan){var s=dataArr.slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)||(a.noBukti||'').localeCompare(b.noBukti||'')});var gt=0,rows='',lastNb='',nbT=0;s.forEach(function(r,i){gt+=r.total;var it=DB.barang.find(function(b){return b.id===r.itemId});var nb=r.noBukti||'-',isF=(nb!==lastNb);if(isF)nbT=s.filter(function(x){return(x.noBukti||'-')===nb}).length;var cls=isF?' nb-group-start nb-border-top':'';var nbC=isF?'<td class="font-medium text-slate-800" rowspan="'+nbT+'">'+nb+'</td>':'';var tgC=isF?'<td class="tc" rowspan="'+nbT+'">'+fD(r.tanggal)+'</td>':'';var ef,df;if(tbodyId==='pembelian-tbody'){ef='editPb';df='deletePbByNb'}else{ef='editTf';df='deleteTfByNb'}var acC=isF?'<td class="tc" rowspan="'+nbT+'"><div class="flex gap-1 justify-center"><button onclick="'+ef+'(\''+nb+'\')" class="text-ocean-600 text-xs">Edit</button><button onclick="'+df+'(\''+nb+'\')" class="text-red-500 text-xs">Hapus</button></div></td>':'';rows+='<tr class="'+cls+'"><td class="tc">'+(i+1)+'</td>'+nbC+tgC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+r.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tr">'+fN(r.harga)+'</td><td class="tr font-semibold text-slate-800">'+fN(r.total)+'</td><td>'+(r.keterangan||'-')+'</td>'+acC+'</tr>';lastNb=nb});if(s.length)rows+='<tr class="row-total"><td colspan="'+colSpan+'" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td><td colspan="2"></td></tr>';document.getElementById(tbodyId).innerHTML=rows||'<tr><td colspan="'+(colSpan+3)+'" class="tc py-6 text-slate-400">Belum ada data</td></tr>'}
+function renderGrp(tbodyId,dataArr,colSpan){
+    var s=dataArr.slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)||(a.noBukti||'').localeCompare(b.noBukti||'')});
+    var gt=0,rows='',lastNb='',nbT=0,nbIdx=0;
+    s.forEach(function(r,i){
+        gt+=r.total;
+        var it=DB.barang.find(function(b){return b.id===r.itemId});
+        var nb=r.noBukti||'-',isF=(nb!==lastNb);
+        if(isF){nbIdx++;nbT=s.filter(function(x){return(x.noBukti||'-')===nb}).length}
+        var cls=isF?' nb-group-start nb-border-top':'';
+        var noC=isF?'<td class="tc font-medium" rowspan="'+nbT+'">'+nbIdx+'</td>':'';
+        var nbC=isF?'<td class="font-medium text-slate-800" rowspan="'+nbT+'">'+nb+'</td>':'';
+        var tgC=isF?'<td class="tc" rowspan="'+nbT+'">'+fD(r.tanggal)+'</td>':'';
+        var ef,df;
+        if(tbodyId==='pembelian-tbody'){ef='editPb';df='deletePbByNb'}else{ef='editTf';df='deleteTfByNb'}
+        var acC=isF?'<td class="tc" rowspan="'+nbT+'"><div class="flex gap-1 justify-center"><button onclick="'+ef+'(\''+nb+'\')" class="text-ocean-600 text-xs">Edit</button><button onclick="'+df+'(\''+nb+'\')" class="text-red-500 text-xs">Hapus</button></div></td>':'';
+        rows+='<tr class="'+cls+'">'+noC+nbC+tgC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+r.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tr">'+fN(r.harga)+'</td><td class="tr font-semibold text-slate-800">'+fN(r.total)+'</td><td>'+(r.keterangan||'-')+'</td>'+acC+'</tr>';
+        lastNb=nb;
+    });
+    if(s.length)rows+='<tr class="row-total"><td colspan="'+colSpan+'" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td><td colspan="2"></td></tr>';
+    document.getElementById(tbodyId).innerHTML=rows||'<tr><td colspan="'+(colSpan+3)+'" class="tc py-6 text-slate-400">Belum ada data</td></tr>';
+}
 function loadPbTb(){renderGrp('pembelian-tbody',DB.pembelian,7)}
 function loadTfTb(){renderGrp('transfer-tbody',DB.transfer,7)}
 
 /* ==================== PEMAKAIAN TABLE ==================== */
-function loadPmTb(){var s=DB.pemakaian.slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)||(a.noBukti||'').localeCompare(b.noBukti||'')||(a.id-b.id)});var gt=0,rows='',lastNb='',nbT=0;s.forEach(function(r,i){gt+=r.total;var it=DB.barang.find(function(b){return b.id===r.itemId});var nb=r.noBukti||'-',isF=(nb!==lastNb);if(isF)nbT=s.filter(function(x){return(x.noBukti||'-')===nb}).length;var cls=isF?' nb-group-start nb-border-top':'';var nbC=isF?'<td class="font-medium text-slate-800" rowspan="'+nbT+'">'+nb+'</td>':'';var tgC=isF?'<td class="tc" rowspan="'+nbT+'">'+fD(r.tanggal)+'</td>':'';var acC=isF?'<td class="tc" rowspan="'+nbT+'"><div class="flex gap-1 justify-center"><button onclick="editPm(\''+nb+'\')" class="text-ocean-600 text-xs">Edit</button><button onclick="deletePmByNb(\''+nb+'\')" class="text-red-500 text-xs">Hapus</button></div></td>':'';rows+='<tr class="'+cls+'"><td class="tc">'+(i+1)+'</td>'+nbC+tgC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+r.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tc">'+r.saldo+'</td><td class="tr">'+fN(r.harga)+'</td><td class="tr font-semibold text-slate-800">'+fN(r.total)+'</td><td>'+(r.keterangan||'-')+'</td>'+acC+'</tr>';lastNb=nb});if(s.length)rows+='<tr class="row-total"><td colspan="8" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td><td colspan="2"></td></tr>';document.getElementById('pemakaian-tbody').innerHTML=rows||'<tr><td colspan="11" class="tc py-6 text-slate-400">Belum ada data</td></tr>'}
+function loadPmTb(){
+    var s=DB.pemakaian.slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)||(a.noBukti||'').localeCompare(b.noBukti||'')||(a.id-b.id)});
+    var gt=0,rows='',lastNb='',nbT=0,nbIdx=0;
+    s.forEach(function(r,i){
+        gt+=r.total;
+        var it=DB.barang.find(function(b){return b.id===r.itemId});
+        var nb=r.noBukti||'-',isF=(nb!==lastNb);
+        if(isF){nbIdx++;nbT=s.filter(function(x){return(x.noBukti||'-')===nb}).length}
+        var cls=isF?' nb-group-start nb-border-top':'';
+        var noC=isF?'<td class="tc font-medium" rowspan="'+nbT+'">'+nbIdx+'</td>':'';
+        var nbC=isF?'<td class="font-medium text-slate-800" rowspan="'+nbT+'">'+nb+'</td>':'';
+        var tgC=isF?'<td class="tc" rowspan="'+nbT+'">'+fD(r.tanggal)+'</td>':'';
+        var acC=isF?'<td class="tc" rowspan="'+nbT+'"><div class="flex gap-1 justify-center"><button onclick="editPm(\''+nb+'\')" class="text-ocean-600 text-xs">Edit</button><button onclick="deletePmByNb(\''+nb+'\')" class="text-red-500 text-xs">Hapus</button></div></td>':'';
+        rows+='<tr class="'+cls+'">'+noC+nbC+tgC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+r.jumlah+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tc">'+r.saldo+'</td><td class="tr">'+fN(r.harga)+'</td><td class="tr font-semibold text-slate-800">'+fN(r.total)+'</td><td>'+(r.keterangan||'-')+'</td>'+acC+'</tr>';
+        lastNb=nb;
+    });
+    if(s.length)rows+='<tr class="row-total"><td colspan="8" class="tr" style="padding-right:8px">TOTAL</td><td class="tr">'+fN(gt)+'</td><td colspan="2"></td></tr>';
+    document.getElementById('pemakaian-tbody').innerHTML=rows||'<tr><td colspan="11" class="tc py-6 text-slate-400">Belum ada data</td></tr>';
+}
 
 /* ==================== PERMINTAAN ==================== */
 function loadPermTb(){var cur=JSON.parse(sessionStorage.getItem('currentUser')),isA=cur&&cur.role==='admin';document.getElementById('th-aksi-permintaan').style.display=isA?'':'none';document.getElementById('permintaan-tbody').innerHTML=DB.permintaan.map(function(p,i){var it=DB.barang.find(function(b){return b.id===p.itemId}),sc='status-menunggu';if(p.status==='Disetujui')sc='status-disetujui';if(p.status==='Ditolak')sc='status-ditolak';var act='';if(isA){if(p.status==='Menunggu')act='<button onclick="approvePerm('+p.id+')" class="text-green-600 text-xs">Setuju</button> <button onclick="rejectPerm('+p.id+')" class="text-red-500 text-xs">Tolak</button> <button onclick="editPerm('+p.id+')" class="text-ocean-600 text-xs">Edit</button> <button onclick="deletePerm('+p.id+')" class="text-slate-400 text-xs">Hapus</button>';else act='<button onclick="printPerm(\''+p.noPermintaan+'\')" class="text-ocean-500 text-xs">Cetak</button> <button onclick="deletePerm('+p.id+')" class="text-slate-400 text-xs">Hapus</button>'}return'<tr><td class="tc">'+(i+1)+'</td><td class="font-medium text-slate-800">'+p.noPermintaan+'</td><td class="tc">'+fD(p.tanggal)+'</td><td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tc">'+p.jumlah+'</td><td><span class="px-2 py-0.5 rounded-full text-xs font-semibold '+sc+'">'+p.status+'</span></td>'+(isA?'<td><div class="flex gap-1 flex-wrap">'+act+'</div></td>':'')+'</tr>'}).join('')}
@@ -365,7 +421,7 @@ function deleteTfByNb(nb){var items=DB.transfer.filter(function(x){return x.noBu
 /* ==================== PEMAKAIAN CRUD (FIFO) ==================== */
 function openPmModal(){restorePmEditBackup();pmC=0;document.getElementById('pm-edit-nb').value='';document.getElementById('pm-nobukti').value='';document.getElementById('pm-nobukti').disabled=false;document.getElementById('pm-tanggal').value=today();document.getElementById('pm-modal-title').textContent='Tambah Pemakaian';document.getElementById('pm-tbody').innerHTML='';addPmRow();openModal('pemakaian-modal')}
 function addPmRow(bid,jml,ket){pmC++;var i=pmC,selId=bid?parseInt(bid):null,tr=document.createElement('tr');tr.id='pm-r-'+i;tr.setAttribute('data-idx',i);tr.innerHTML='<td class="tc" style="font-weight:600">'+i+'</td><td><select class="input-field py-1" id="pm-b-'+i+'" onchange="updPmInfo('+i+')"><option value="">-- Pilih --</option>'+makeAvailOpts(selId)+'</select></td><td><input type="number" class="input-field py-1 tc" id="pm-j-'+i+'" value="'+(jml||'')+'" min="1" oninput="calcPmFifo('+i+')"></td><td><input type="text" class="input-field py-1 tc bg-slate-50 text-xs" id="pm-st-'+i+'" readonly value="-"></td><td><input type="text" class="input-field py-1 tc bg-slate-50" id="pm-s-'+i+'" readonly></td><td><input type="text" class="input-field py-1 tr bg-slate-50" id="pm-h-'+i+'" readonly value="-"></td><td><input type="text" class="input-field py-1 tr bg-slate-50 font-semibold" id="pm-t-'+i+'" readonly value="-"></td><td><input type="text" class="input-field py-1" id="pm-k-'+i+'" value="'+(ket||'')+'" placeholder="-"></td><td class="tc"><button onclick="rmPmRow('+i+')" class="btn-danger-sm">&#10005;</button></td>';document.getElementById('pm-tbody').appendChild(tr);if(bid)updPmInfo(i);renumPm()}
-function rmPmRow(i){if(document.querySelectorAll('#pm-tbody tr').length<=1){alert('Minimal 1 baris');return}removeFifoPreview(i);document.getElementById('pm-r-'+i).remove();renumPm();calcPmGT()}
+function rmPmRow(i){if(document.querySelectorAll('#pm-tbody tr:not(.fifo-detail)').length<=1){alert('Minimal 1 baris');return}removeFifoPreview(i);document.getElementById('pm-r-'+i).remove();renumPm();calcPmGT()}
 function renumPm(){document.querySelectorAll('#pm-tbody tr:not(.fifo-detail)').forEach(function(r,j){r.cells[0].textContent=j+1})}
 function updPmInfo(i){var bid=parseInt(document.getElementById('pm-b-'+i).value),it=DB.barang.find(function(b){return b.id===bid});document.getElementById('pm-s-'+i).value=it?it.satuan:'';document.getElementById('pm-st-'+i).value=bid?(getStock(bid)+' '+(it?it.satuan:'')):'-';document.getElementById('pm-h-'+i).value='-';document.getElementById('pm-t-'+i).value='-';removeFifoPreview(i);calcPmGT()}
 function showFifoPreview(rowIdx,breakdown){removeFifoPreview(rowIdx);var tr=document.getElementById('pm-r-'+rowIdx);if(!tr)return;var it=DB.barang.find(function(b){return b.id===parseInt(document.getElementById('pm-b-'+rowIdx).value)}),sat=it?it.satuan:'';breakdown.batches.forEach(function(batch,bi){var detTr=document.createElement('tr');detTr.className='fifo-detail';detTr.id='pm-fifo-'+rowIdx+'-'+bi;var srcText=decodeBatchSource(batch.source);detTr.innerHTML='<td colspan="2" style="padding-left:24px;font-size:10px">&#8627; Batch '+(bi+1)+': '+srcText+'</td><td class="tc" style="font-weight:600">'+batch.jumlah+'</td><td class="tc" style="font-size:10px;color:#78350F">'+sat+'</td><td></td><td class="tr" style="font-size:10px">'+fN(batch.harga)+'</td><td class="tr" style="font-size:10px;font-weight:600">'+fN(batch.total)+'</td><td colspan="2"></td>';tr.after(detTr)})}
@@ -434,182 +490,12 @@ function generateDateReport(){var s=document.getElementById('filter-date-start')
 
 /* ==================== KARTU KENDALI PRINT ==================== */
 function generateKartuReport(){var sigT=document.getElementById('kartu-sig-tanggal').value,tc=sigT?new Date(sigT).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'............',pg=document.getElementById('kartu-sig-pengelola').value||'............',pgN=document.getElementById('kartu-sig-pengelola-nip').value||'............',mk=document.getElementById('kartu-sig-mengetahui').value||'............',mkN=document.getElementById('kartu-sig-mengetahui-nip').value||'............',iid=parseInt(document.getElementById('kartu-barang').value),item=DB.barang.find(function(x){return x.id===iid}),bv=document.getElementById('kartu-bulan').value,tv=document.getElementById('kartu-tahun').value,pTxt='Semua Periode',odS='-';if(bv&&tv){pTxt=document.getElementById('kartu-bulan').options[document.getElementById('kartu-bulan').selectedIndex].text+' '+tv;odS=fD(new Date(parseInt(tv),parseInt(bv)-1,1))}var trs=[];DB.saldoAwal.filter(function(sa){return sa.itemId===iid}).forEach(function(sa){trs.push({tgl:sa.tanggal,ur:'Saldo Awal',m:sa.jumlah,k:0,ket:sa.keterangan||'Stok awal',sd:new Date(sa.tanggal)})});DB.pembelian.filter(function(p){return p.itemId===iid}).forEach(function(p){trs.push({tgl:p.tanggal,ur:'Pembelian - '+p.noBukti,m:p.jumlah,k:0,ket:p.keterangan,sd:new Date(p.tanggal)})});DB.transfer.filter(function(t){return t.itemId===iid}).forEach(function(t){trs.push({tgl:t.tanggal,ur:'Transfer Masuk - '+t.noBukti,m:t.jumlah,k:0,ket:t.keterangan,sd:new Date(t.tanggal)})});DB.pemakaian.filter(function(p){return p.itemId===iid}).forEach(function(p){trs.push({tgl:p.tanggal,ur:'Pemakaian - '+p.noBukti,m:0,k:p.jumlah,ket:p.keterangan,sd:new Date(p.tanggal)})});trs.sort(function(a,b){return a.sd-b.sd});var disp=[],ob=0,no=1;if(bv&&tv){var stD=new Date(parseInt(tv),parseInt(bv)-1,1),enD=new Date(parseInt(tv),parseInt(bv),0,23,59,59);trs.forEach(function(t){if(t.sd<stD)ob+=(t.m-t.k)});trs.forEach(function(t){if(t.sd>=stD&&t.sd<=enD)disp.push(t)})}else disp=trs;var sisa=ob,rows='';if(bv&&tv)rows+='<tr style="background:#f0f0f0"><td class="tc">'+(no++)+'</td><td class="tc">'+odS+'</td><td style="font-weight:bold">Saldo Awal</td><td class="tc">-</td><td class="tc">-</td><td class="tc" style="font-weight:bold">'+sisa+'</td><td>Per 1 '+pTxt+'</td></tr>';disp.forEach(function(t){sisa+=t.m-t.k;rows+='<tr><td class="tc">'+(no++)+'</td><td class="tc">'+fD(t.sd)+'</td><td>'+t.ur+'</td><td class="tc">'+(t.m||'-')+'</td><td class="tc">'+(t.k||'-')+'</td><td class="tc">'+sisa+'</td><td>'+(t.ket||'-')+'</td></tr>'});document.getElementById('print-content').innerHTML='<table style="width:100%;border-collapse:collapse;margin-bottom:12px"><tr><td style="width:70px;text-align:center;vertical-align:middle;padding-right:6px"><img src="https://z-cdn-media.chatglm.cn/files/b8bffa74-ccd7-43df-ac0a-7d38232e3901.png?auth_key=1872868863-b6cd966dc51a4c34aa738032b487a895-0-e6beed34fb7fb9a9650976366f590c26" style="width:90px;height:auto"></td><td style="text-align:left;vertical-align:middle"><div style="font-size:15pt;font-weight:bold">BADAN PUSAT STATISTIK</div><div style="font-size:13pt">KOTA PEKANBARU</div></td></tr></table><h2 style="text-align:center;font-weight:bold;font-size:14pt;text-decoration:underline;margin-top:30px;margin-bottom:15px;">KARTU KENDALI BARANG PERSEDIAAN</h2><table style="width:100%;font-size:10px;margin-bottom:10px;border-collapse:collapse"><tr><td style="width:10%">Nama Barang:</td><td style="width:35%;font-weight:bold;padding-left:10px">'+(item?item.deskripsi:'-')+'</td><td style="width:10%"></td><td style="width:33%;text-align:right;padding-right:10px">Bulan:</td><td style="width:25%;font-weight:bold;text-align:right">'+pTxt+'</td></tr></table><table class="bt"><colgroup><col style="width:5%"><col style="width:11%"><col style="width:30%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:24%"></colgroup><thead><tr><th>No</th><th>Tanggal</th><th>Uraian</th><th>Masuk</th><th>Keluar</th><th>Sisa</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin-top:30px;text-align:center;font-size:10px"><table style="width:100%;border-collapse:collapse"><tr style="vertical-align:top"><td style="width:50%"><div style="height:1.3em">&nbsp;</div><div style="margin-bottom:53px">Mengetahui,</div><div style="font-weight:bold;text-decoration:underline">'+mk+'</div><div>NIP. '+mkN+'</div></td><td style="width:50%"><div>Pekanbaru, '+tc+'</div><div style="margin-bottom:50px">Pengelola Persediaan,</div><div style="font-weight:bold;text-decoration:underline">'+pg+'</div><div>NIP. '+pgN+'</div></td></tr></table></div>';document.getElementById('print-title').innerText='Kartu Kendali';closeModal('kartu-print-modal');openPrintModal()}
+
 /* ==================== LAPORAN TRANSAKSI PERSEDIAAN ==================== */
-function openPersediaanModal(){
-    var y=new Date().getFullYear();
-    document.getElementById('pers-start').value=y+'-01-01';
-    document.getElementById('pers-end').value=y+'-03-31';
-    document.getElementById('pers-ta').value=y;
-    document.getElementById('pers-tgl-laporan').value=today();
-    document.getElementById('pers-disetujui-tgl').value='';
-    document.getElementById('pers-rusak').value='0';
-    document.getElementById('pers-using').value='0';
-    openModal('persediaan-modal');
-}
+function openPersediaanModal(){var y=new Date().getFullYear();document.getElementById('pers-start').value=y+'-01-01';document.getElementById('pers-end').value=y+'-03-31';document.getElementById('pers-ta').value=y;document.getElementById('pers-tgl-laporan').value=today();document.getElementById('pers-disetujui-tgl').value='';document.getElementById('pers-rusak').value='0';document.getElementById('pers-using').value='0';openModal('persediaan-modal')}
+function calculatePersediaanData(startDate,endDate){var results=[],itemIds=new Set();DB.saldoAwal.forEach(function(sa){itemIds.add(sa.itemId)});DB.pembelian.forEach(function(p){itemIds.add(p.itemId)});DB.transfer.forEach(function(t){itemIds.add(t.itemId)});DB.pemakaian.forEach(function(p){itemIds.add(p.itemId)});itemIds.forEach(function(id){var barang=DB.barang.find(function(b){return b.id===id});if(!barang)return;var queue=[];function addMasuk(jumlah,harga){queue.push({jumlah:jumlah,sisa:jumlah,harga:harga})}function applyKeluar(jumlah){var rem=jumlah;for(var i=0;i<queue.length&&rem>0;i++){if(queue[i].sisa>0){var take=Math.min(queue[i].sisa,rem);queue[i].sisa-=take;rem-=take}}}DB.saldoAwal.filter(function(sa){return sa.itemId===id&&sa.tanggal<startDate}).forEach(function(sa){addMasuk(sa.jumlah,sa.harga)});DB.pembelian.filter(function(p){return p.itemId===id&&p.tanggal<startDate}).forEach(function(p){addMasuk(p.jumlah,p.harga)});DB.transfer.filter(function(t){return t.itemId===id&&t.tanggal<startDate}).forEach(function(t){addMasuk(t.jumlah,t.harga)});DB.pemakaian.filter(function(p){return p.itemId===id&&p.tanggal<startDate}).slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)||(a.id-b.id)}).forEach(function(p){applyKeluar(p.jumlah)});var saldoAwalJml=queue.reduce(function(s,b){return s+b.sisa},0),saldoAwalRp=queue.reduce(function(s,b){return s+b.sisa*b.harga},0);var masukJml=0,keluarJml=0,periodTx=[];DB.saldoAwal.filter(function(sa){return sa.itemId===id&&sa.tanggal>=startDate&&sa.tanggal<=endDate}).forEach(function(sa){periodTx.push({type:'masuk',tanggal:sa.tanggal,jumlah:sa.jumlah,harga:sa.harga})});DB.pembelian.filter(function(p){return p.itemId===id&&p.tanggal>=startDate&&p.tanggal<=endDate}).forEach(function(p){periodTx.push({type:'masuk',tanggal:p.tanggal,jumlah:p.jumlah,harga:p.harga})});DB.transfer.filter(function(t){return t.itemId===id&&t.tanggal>=startDate&&t.tanggal<=endDate}).forEach(function(t){periodTx.push({type:'masuk',tanggal:t.tanggal,jumlah:t.jumlah,harga:t.harga})});DB.pemakaian.filter(function(p){return p.itemId===id&&p.tanggal>=startDate&&p.tanggal<=endDate}).forEach(function(p){periodTx.push({type:'keluar',tanggal:p.tanggal,jumlah:p.jumlah})});periodTx.sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)});periodTx.forEach(function(tx){if(tx.type==='masuk'){addMasuk(tx.jumlah,tx.harga);masukJml+=tx.jumlah}else{applyKeluar(tx.jumlah);keluarJml+=tx.jumlah}});var saldoAkhirJml=queue.reduce(function(s,b){return s+b.sisa},0),saldoAkhirRp=queue.reduce(function(s,b){return s+b.sisa*b.harga},0);if(saldoAwalJml>0||masukJml>0||keluarJml>0||saldoAkhirJml>0){results.push({kode:barang.kode,nama:barang.deskripsi,saldoAwalJml:saldoAwalJml,saldoAwalRp:saldoAwalRp,masukJml:masukJml,keluarJml:keluarJml,saldoAkhirJml:saldoAkhirJml,saldoAkhirRp:saldoAkhirRp})}});results.sort(function(a,b){return a.kode.localeCompare(b.kode)});return results}
+function generatePersediaanReport(){var startDate=document.getElementById('pers-start').value,endDate=document.getElementById('pers-end').value,ta=document.getElementById('pers-ta').value,namaUakpb=document.getElementById('pers-nama-uakpb').value,kodeUakpb=document.getElementById('pers-kode-uakpb').value,rusakVal=parseInt((document.getElementById('pers-rusak').value||'0').replace(/\./g,''))||0,usingVal=parseInt((document.getElementById('pers-using').value||'0').replace(/\./g,''))||0,disetujuiTgl=document.getElementById('pers-disetujui-tgl').value,kpbNama=document.getElementById('pers-kpb-nama').value,kpbNip=document.getElementById('pers-kpb-nip').value,ppNama=document.getElementById('pers-pp-nama').value,ppNip=document.getElementById('pers-pp-nip').value,tglLaporan=document.getElementById('pers-tgl-laporan').value;if(!startDate||!endDate){alert('Tanggal periode wajib diisi');return}if(new Date(startDate)>new Date(endDate)){alert('Tanggal mulai lebih besar dari tanggal akhir');return}var data=calculatePersediaanData(startDate,endDate);if(!data.length){alert('Tidak ada data transaksi pada periode tersebut');return}var endFmt=new Date(endDate).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'}),startFmt=new Date(startDate).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'});var totalAwalRp=0,totalAkhirRp=0;var rows=data.map(function(d){totalAwalRp+=d.saldoAwalRp;totalAkhirRp+=d.saldoAkhirRp;return'<tr><td style="font-size:8pt">'+d.kode+'</td><td style="font-size:8pt">'+d.nama+'</td><td class="tc" style="font-size:8pt">'+d.saldoAwalJml+'</td><td class="tr" style="font-size:8pt">'+fN(d.saldoAwalRp)+'</td><td class="tc" style="font-size:8pt">'+d.masukJml+'</td><td class="tc" style="font-size:8pt">'+d.keluarJml+'</td><td class="tc" style="font-size:8pt">'+d.saldoAkhirJml+'</td><td class="tr" style="font-size:8pt">'+fN(d.saldoAkhirRp)+'</td></tr>'}).join('');var disetujuiFmt=disetujuiTgl?new Date(disetujuiTgl).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'}):'............',laporanFmt=tglLaporan?'Pekanbaru, '+new Date(tglLaporan).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'Pekanbaru, ............',rusakStr=rusakVal.toLocaleString('id-ID')+',-',usingStr=usingVal.toLocaleString('id-ID')+',-';document.getElementById('print-content').innerHTML='<div style="text-align:center;margin-bottom:8px"><div style="font-size:12pt;font-weight:bold;line-height:1.4">LAPORAN RINCIAN BARANG PERSEDIAAN</div><div style="font-size:10pt;line-height:1.4">UNTUK PERIODE YANG BERAKHIR TANGGAL '+endFmt+'</div><div style="font-size:10pt;line-height:1.4">TAHUN ANGGARAN : '+ta+'</div></div><table style="width:100%;font-size:9pt;margin-bottom:10px;border-collapse:collapse"><tr><td style="width:18%;vertical-align:top">NAMA UAKPB</td><td style="width:2%;vertical-align:top">:</td><td style="width:45%;vertical-align:top">'+namaUakpb+'</td><td style="width:12%"></td><td style="width:23%"></td></tr><tr><td style="vertical-align:top">KODE UAKPB</td><td style="vertical-align:top">:</td><td style="vertical-align:top">'+kodeUakpb+'</td><td></td><td></td></tr></table><table class="bt" style="font-size:8pt"><colgroup><col style="width:16%"><col style="width:22%"><col style="width:7%"><col style="width:15%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:15%"></colgroup><thead><tr><th rowspan="2" style="font-size:7.5pt;vertical-align:middle">KODE BARANG</th><th rowspan="2" style="font-size:7.5pt;vertical-align:middle">NAMA BARANG</th><th colspan="2" style="font-size:7.5pt">NILAI S/D '+startFmt+'</th><th colspan="2" style="font-size:7.5pt">MUTASI</th><th colspan="2" style="font-size:7.5pt">NILAI S/D '+endFmt+'</th></tr><tr><th style="font-size:7pt">JUMLAH</th><th style="font-size:7pt">RUPIAH</th><th style="font-size:7pt">MASUK</th><th style="font-size:7pt">KELUAR</th><th style="font-size:7pt">JUMLAH</th><th style="font-size:7pt">RUPIAH</th></tr></thead><tbody>'+rows+'<tr style="background:#d9d9d9;font-weight:bold"><td colspan="2" class="tr" style="padding-right:6px;font-size:8pt">JUMLAH</td><td></td><td class="tr" style="font-size:8pt">'+fN(totalAwalRp)+'</td><td></td><td></td><td></td><td class="tr" style="font-size:8pt">'+fN(totalAkhirRp)+'</td></tr></tbody></table><div style="margin-top:8px"><div style="font-size:8.5pt;font-weight:600;margin-bottom:3px">Keterangan:</div><div style="font-size:8pt;padding-left:12px">1. Persediaan senilai '+rusakStr+' dalam kondisi rusak</div><div style="font-size:8pt;padding-left:12px">2. Persediaan senilai '+usingStr+' dalam kondisi using</div></div><div style="margin-top:35px"><table style="width:100%;font-size:9pt;text-align:center;border-collapse:collapse"><tr style="vertical-align:top"><td style="width:50%"><div style="margin-bottom:2px">Disetujui tanggal : '+disetujuiFmt+'</div><div>Kuasa Pengguna Barang</div><div style="margin-bottom:48px">&nbsp;</div><div style="font-weight:bold;text-decoration:underline;font-size:10pt">'+kpbNama+'</div><div>NIP. '+kpbNip+'</div></td><td style="width:50%"><div style="margin-bottom:2px">'+laporanFmt+'</div><div>Petugas Pengelola Persediaan</div><div style="margin-bottom:48px">&nbsp;</div><div style="font-weight:bold;text-decoration:underline;font-size:10pt">'+ppNama+'</div><div>NIP. '+ppNip+'</div></td></tr></table></div>';document.getElementById('print-title').innerText='Laporan Transaksi Persediaan';closeModal('persediaan-modal');openPrintModal()}
 
-function calculatePersediaanData(startDate,endDate){
-    var results=[];
-    var itemIds=new Set();
-    DB.saldoAwal.forEach(function(sa){itemIds.add(sa.itemId)});
-    DB.pembelian.forEach(function(p){itemIds.add(p.itemId)});
-    DB.transfer.forEach(function(t){itemIds.add(t.itemId)});
-    DB.pemakaian.forEach(function(p){itemIds.add(p.itemId)});
-
-    itemIds.forEach(function(id){
-        var barang=DB.barang.find(function(b){return b.id===id});
-        if(!barang)return;
-
-        var queue=[];
-        function addMasuk(jumlah,harga){queue.push({jumlah:jumlah,sisa:jumlah,harga:harga})}
-        function applyKeluar(jumlah){
-            var rem=jumlah;
-            for(var i=0;i<queue.length&&rem>0;i++){
-                if(queue[i].sisa>0){var take=Math.min(queue[i].sisa,rem);queue[i].sisa-=take;rem-=take}
-            }
-        }
-
-        /* Fase 1: Bangun queue dengan transaksi SEBELUM startDate */
-        DB.saldoAwal.filter(function(sa){return sa.itemId===id&&sa.tanggal<startDate}).forEach(function(sa){addMasuk(sa.jumlah,sa.harga)});
-        DB.pembelian.filter(function(p){return p.itemId===id&&p.tanggal<startDate}).forEach(function(p){addMasuk(p.jumlah,p.harga)});
-        DB.transfer.filter(function(t){return t.itemId===id&&t.tanggal<startDate}).forEach(function(t){addMasuk(t.jumlah,t.harga)});
-        DB.pemakaian.filter(function(p){return p.itemId===id&&p.tanggal<startDate}).slice().sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)||(a.id-b.id)}).forEach(function(p){applyKeluar(p.jumlah)});
-
-        var saldoAwalJml=queue.reduce(function(s,b){return s+b.sisa},0);
-        var saldoAwalRp=queue.reduce(function(s,b){return s+b.sisa*b.harga},0);
-
-        /* Fase 2: Terapkan transaksi PERIODE */
-        var masukJml=0,keluarJml=0;
-        var periodTx=[];
-        DB.saldoAwal.filter(function(sa){return sa.itemId===id&&sa.tanggal>=startDate&&sa.tanggal<=endDate}).forEach(function(sa){periodTx.push({type:'masuk',tanggal:sa.tanggal,jumlah:sa.jumlah,harga:sa.harga})});
-        DB.pembelian.filter(function(p){return p.itemId===id&&p.tanggal>=startDate&&p.tanggal<=endDate}).forEach(function(p){periodTx.push({type:'masuk',tanggal:p.tanggal,jumlah:p.jumlah,harga:p.harga})});
-        DB.transfer.filter(function(t){return t.itemId===id&&t.tanggal>=startDate&&t.tanggal<=endDate}).forEach(function(t){periodTx.push({type:'masuk',tanggal:t.tanggal,jumlah:t.jumlah,harga:t.harga})});
-        DB.pemakaian.filter(function(p){return p.itemId===id&&p.tanggal>=startDate&&p.tanggal<=endDate}).forEach(function(p){periodTx.push({type:'keluar',tanggal:p.tanggal,jumlah:p.jumlah})});
-        periodTx.sort(function(a,b){return new Date(a.tanggal)-new Date(b.tanggal)});
-
-        periodTx.forEach(function(tx){
-            if(tx.type==='masuk'){addMasuk(tx.jumlah,tx.harga);masukJml+=tx.jumlah}
-            else{applyKeluar(tx.jumlah);keluarJml+=tx.jumlah}
-        });
-
-        var saldoAkhirJml=queue.reduce(function(s,b){return s+b.sisa},0);
-        var saldoAkhirRp=queue.reduce(function(s,b){return s+b.sisa*b.harga},0);
-
-        if(saldoAwalJml>0||masukJml>0||keluarJml>0||saldoAkhirJml>0){
-            results.push({kode:barang.kode,nama:barang.deskripsi,saldoAwalJml:saldoAwalJml,saldoAwalRp:saldoAwalRp,masukJml:masukJml,keluarJml:keluarJml,saldoAkhirJml:saldoAkhirJml,saldoAkhirRp:saldoAkhirRp});
-        }
-    });
-    results.sort(function(a,b){return a.kode.localeCompare(b.kode)});
-    return results;
-}
-
-function generatePersediaanReport(){
-    var startDate=document.getElementById('pers-start').value;
-    var endDate=document.getElementById('pers-end').value;
-    var ta=document.getElementById('pers-ta').value;
-    var namaUakpb=document.getElementById('pers-nama-uakpb').value;
-    var kodeUakpb=document.getElementById('pers-kode-uakpb').value;
-    var rusakVal=parseInt((document.getElementById('pers-rusak').value||'0').replace(/\./g,''))||0;
-    var usingVal=parseInt((document.getElementById('pers-using').value||'0').replace(/\./g,''))||0;
-    var disetujuiTgl=document.getElementById('pers-disetujui-tgl').value;
-    var kpbNama=document.getElementById('pers-kpb-nama').value;
-    var kpbNip=document.getElementById('pers-kpb-nip').value;
-    var ppNama=document.getElementById('pers-pp-nama').value;
-    var ppNip=document.getElementById('pers-pp-nip').value;
-    var tglLaporan=document.getElementById('pers-tgl-laporan').value;
-
-    if(!startDate||!endDate){alert('Tanggal periode wajib diisi');return}
-    if(new Date(startDate)>new Date(endDate)){alert('Tanggal mulai lebih besar dari tanggal akhir');return}
-
-    var data=calculatePersediaanData(startDate,endDate);
-    if(!data.length){alert('Tidak ada data transaksi pada periode tersebut');return}
-
-    var endFmt=new Date(endDate).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'});
-    var startFmt=new Date(startDate).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'});
-
-    var totalAwalRp=0,totalAkhirRp=0;
-    var rows=data.map(function(d){
-        totalAwalRp+=d.saldoAwalRp;
-        totalAkhirRp+=d.saldoAkhirRp;
-        return'<tr><td style="font-size:8pt">'+d.kode+'</td><td style="font-size:8pt">'+d.nama+'</td><td class="tc" style="font-size:8pt">'+d.saldoAwalJml+'</td><td class="tr" style="font-size:8pt">'+fN(d.saldoAwalRp)+'</td><td class="tc" style="font-size:8pt">'+d.masukJml+'</td><td class="tc" style="font-size:8pt">'+d.keluarJml+'</td><td class="tc" style="font-size:8pt">'+d.saldoAkhirJml+'</td><td class="tr" style="font-size:8pt">'+fN(d.saldoAkhirRp)+'</td></tr>';
-    }).join('');
-
-    var disetujuiFmt=disetujuiTgl?new Date(disetujuiTgl).toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'}):'............';
-    var laporanFmt=tglLaporan?'Pekanbaru, '+new Date(tglLaporan).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'Pekanbaru, ............';
-    var rusakStr=rusakVal.toLocaleString('id-ID')+',-';
-    var usingStr=usingVal.toLocaleString('id-ID')+',-';
-
-    document.getElementById('print-content').innerHTML=
-        '<div style="text-align:center;margin-bottom:8px">'+
-            '<div style="font-size:12pt;font-weight:bold;text-decoration:underline;line-height:1.4">LAPORAN RINCIAN BARANG PERSEDIAAN</div>'+
-            '<div style="font-size:10pt;line-height:1.4">UNTUK PERIODE YANG BERAKHIR TANGGAL '+endFmt+'</div>'+
-            '<div style="font-size:10pt;line-height:1.4">TAHUN ANGGARAN : '+ta+'</div>'+
-        '</div>'+
-        '<table style="width:100%;font-size:9pt;margin-bottom:10px;border-collapse:collapse">'+
-            '<tr><td style="width:18%;vertical-align:top">NAMA UAKPB</td><td style="width:2%;vertical-align:top">:</td><td style="width:45%;vertical-align:top">'+namaUakpb+'</td><td style="width:12%"></td><td style="width:23%"></td></tr>'+
-            '<tr><td style="vertical-align:top">KODE UAKPB</td><td style="vertical-align:top">:</td><td style="vertical-align:top">'+kodeUakpb+'</td><td></td><td></td></tr>'+
-        '</table>'+
-        '<table class="bt" style="font-size:8pt">'+
-            '<colgroup><col style="width:16%"><col style="width:22%"><col style="width:7%"><col style="width:15%"><col style="width:7%"><col style="width:7%"><col style="width:7%"><col style="width:15%"></colgroup>'+
-            '<thead>'+
-                '<tr>'+
-                    '<th rowspan="2" style="font-size:7.5pt;vertical-align:middle">KODE BARANG</th>'+
-                    '<th rowspan="2" style="font-size:7.5pt;vertical-align:middle">NAMA BARANG</th>'+
-                    '<th colspan="2" style="font-size:7.5pt">NILAI S/D '+startFmt+'</th>'+
-                    '<th colspan="2" style="font-size:7.5pt">MUTASI</th>'+
-                    '<th colspan="2" style="font-size:7.5pt">NILAI S/D '+endFmt+'</th>'+
-                '</tr>'+
-                '<tr>'+
-                    '<th style="font-size:7pt">JUMLAH</th>'+
-                    '<th style="font-size:7pt">RUPIAH</th>'+
-                    '<th style="font-size:7pt">MASUK</th>'+
-                    '<th style="font-size:7pt">KELUAR</th>'+
-                    '<th style="font-size:7pt">JUMLAH</th>'+
-                    '<th style="font-size:7pt">RUPIAH</th>'+
-                '</tr>'+
-            '</thead>'+
-            '<tbody>'+
-                rows+
-                '<tr style="background:#d9d9d9;font-weight:bold">'+
-                    '<td colspan="2" class="tr" style="padding-right:6px;font-size:8pt">JUMLAH</td>'+
-                    '<td></td>'+
-                    '<td class="tr" style="font-size:8pt">'+fN(totalAwalRp)+'</td>'+
-                    '<td></td>'+
-                    '<td></td>'+
-                    '<td></td>'+
-                    '<td class="tr" style="font-size:8pt">'+fN(totalAkhirRp)+'</td>'+
-                '</tr>'+
-            '</tbody>'+
-        '</table>'+
-        '<div style="margin-top:8px">'+
-            '<div style="font-size:8.5pt;font-weight:600;margin-bottom:3px">Keterangan:</div>'+
-            '<div style="font-size:8pt;padding-left:12px">1. Persediaan senilai '+rusakStr+' dalam kondisi rusak</div>'+
-            '<div style="font-size:8pt;padding-left:12px">2. Persediaan senilai '+usingStr+' dalam kondisi using</div>'+
-        '</div>'+
-        '<div style="margin-top:35px">'+
-            '<table style="width:100%;font-size:9pt;text-align:center;border-collapse:collapse">'+
-                '<tr style="vertical-align:top">'+
-                    '<td style="width:50%">'+
-                        '<div style="margin-bottom:2px">Disetujui tanggal : '+disetujuiFmt+'</div>'+
-                        '<div>Kuasa Pengguna Barang</div>'+
-                        '<div style="margin-bottom:48px">&nbsp;</div>'+
-                        '<div style="font-weight:bold;text-decoration:underline;font-size:10pt">'+kpbNama+'</div>'+
-                        '<div>NIP. '+kpbNip+'</div>'+
-                    '</td>'+
-                    '<td style="width:50%">'+
-                        '<div style="margin-bottom:2px">'+laporanFmt+'</div>'+
-                        '<div>Petugas Pengelola Persediaan</div>'+
-                        '<div style="margin-bottom:48px">&nbsp;</div>'+
-                        '<div style="font-weight:bold;text-decoration:underline;font-size:10pt">'+ppNama+'</div>'+
-                        '<div>NIP. '+ppNip+'</div>'+
-                    '</td>'+
-                '</tr>'+
-            '</table>'+
-        '</div>';
-
-    document.getElementById('print-title').innerText='Laporan Transaksi Persediaan';
-    closeModal('persediaan-modal');
-    openPrintModal();
-}
 /* ==================== NAVIGATION ==================== */
 function showPage(page){
     sessionStorage.setItem('currentPage',page);
