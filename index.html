@@ -129,6 +129,11 @@
     #print-content tbody tr{page-break-inside:avoid!important}
     #print-title,button,.no-print,.website-copyright{display:none!important}
     .tc{text-align:center!important}
+    #main-nav > div > .nav-item.active {
+    border-left: none;
+    margin-left: 0;
+    padding-left: 14px;
+}
 }
     </style>
 </head>
@@ -472,7 +477,8 @@ function toggleSubmenu(id, el) {
     var sub = document.getElementById(id);
     var wasOpen = !sub.classList.contains('hidden');
 
-    // Tutup SEMUA submenu dulu
+    // Tutup SEMUA submenu & hapus active dari semua nav item
+    document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
     document.querySelectorAll('#main-nav > div > div[id$="-submenu"]').forEach(function(sub) {
         sub.classList.add('hidden');
     });
@@ -480,11 +486,11 @@ function toggleSubmenu(id, el) {
         arrow.classList.remove('open');
     });
 
-    // Kalau sebelumnya TERTUTUP → buka yang diklik
-    // Kalau sebelumnya TERBUKA → biarkan tutup (sudah ditutup di atas)
+    // Kalau sebelumnya TERTUTUP → buka & bold
     if (!wasOpen) {
         sub.classList.remove('hidden');
         if (el) {
+            el.classList.add('active');
             var arrow = el.querySelector('.nav-parent-arrow');
             if (arrow) arrow.classList.add('open');
         }
@@ -541,9 +547,13 @@ function showPage(page){
     document.title=(tm[page]||'SIPEDANG')+' - SIPEDANG';
     document.querySelectorAll('.page-content').forEach(function(p){p.classList.add('hidden')});
     document.getElementById('page-'+page).classList.remove('hidden');
-    document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+        document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
     var el=document.querySelector('[data-page="'+page+'"]');
     if(el)el.classList.add('active');
+    // Bold parent menu juga
+    var parentMap={'stock':'menu-stock-parent','opname':'menu-stock-parent','barang':'menu-referensi','backup':'menu-referensi','saldoawal':'menu-transaksi-masuk','pembelian':'menu-transaksi-masuk','transfer':'menu-transaksi-masuk','pemakaian':'menu-transaksi-keluar'};
+    var pid=parentMap[page];
+    if(pid){var pEl=document.getElementById(pid);if(pEl){var pNav=pEl.querySelector(':scope > .nav-item');if(pNav)pNav.classList.add('active')}}
     if(page==='dashboard')loadDash();
     else if(page==='stock')loadStockTb();
     else if(page==='opname')loadOpnameData();
