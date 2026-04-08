@@ -504,6 +504,18 @@ function loadPermTb(){
         var tg=fD(items[0].tanggal),nbT=items.length;
         var divisi=items[0].divisi||'-',yangMeminta=items[0].yangMeminta||'-',disetujui=items[0].disetujui||'-';
         var processedToPm=items[0].processedToPm===true;
+
+        /* Hitung total qty pemakaian per itemId dari permintaan ini */
+        var pmQtyMap={};
+        if(processedToPm){
+            DB.pemakaian.forEach(function(pm){
+                if(pm.fromPermintaan===noP){
+                    if(!pmQtyMap[pm.itemId])pmQtyMap[pm.itemId]=0;
+                    pmQtyMap[pm.itemId]+=pm.jumlah;
+                }
+            });
+        }
+
         items.forEach(function(p,idx){
             var it=DB.barang.find(function(b){return b.id===p.itemId}),cls=idx===0?' nb-group-start nb-border-top':'';
             var noC=idx===0?'<td class="tc font-medium" rowspan="'+nbT+'">'+nbIdx+'</td>':'';
@@ -511,12 +523,28 @@ function loadPermTb(){
             var tgC=idx===0?'<td class="tc" rowspan="'+nbT+'">'+tg+'</td>':'';
             var divC=idx===0?'<td rowspan="'+nbT+'" style="font-size:10.5px;color:#475569">'+divisi+'</td>':'';
             var stC=idx===0?'<td class="tc" rowspan="'+nbT+'"><span class="px-2 py-0.5 rounded-full text-xs font-semibold '+sc+'">'+status+'</span>'+(processedToPm?'<br><span class="perm-processed-badge" style="margin-top:2px">Diproses</span>':'')+'</td>':'';
+
+            /* Cek kesesuaian jumlah */
+            var qtyCell='';
+            if(processedToPm){
+                var pmQty=pmQtyMap[p.itemId]||0;
+                if(p.jumlah!==pmQty){
+                    var selisih=p.jumlah-pmQty;
+                    var selisihTxt=selisih>0?'kurang '+selisih:'lebih '+Math.abs(selisih);
+                    qtyCell='<td class="tc" style="background:#FEE2E2;padding:2px 4px;vertical-align:middle" title="Di pemakaian: '+pmQty+' — selisih ('+selisihTxt+')"><div style="color:#DC2626;font-weight:800;font-size:12px;line-height:1.2">'+p.jumlah+'</div><div style="color:#991B1B;font-size:8px;font-weight:600;font-style:italic;line-height:1.1;margin-top:1px">Disetujui ('+pmQty+')</div></td>';
+                }else{
+                    qtyCell='<td class="tc">'+p.jumlah+'</td>';
+                }
+            }else{
+                qtyCell='<td class="tc">'+p.jumlah+'</td>';
+            }
+
             var act='';
             if(isA&&idx===0){
                 if(status==='Menunggu'){act='<button onclick="approvePerm(\''+noP+'\')" class="text-green-600 text-xs font-semibold">Setuju</button> <button onclick="rejectPerm(\''+noP+'\')" class="text-red-500 text-xs font-semibold">Tolak</button> <button onclick="editPerm(\''+noP+'\')" class="text-bps-navy text-xs font-semibold">Edit</button> <button onclick="deletePerm(\''+noP+'\')" class="text-slate-400 text-xs">Hapus</button>'}
                 else{act='<button onclick="printPerm(\''+noP+'\')" class="text-bps-navy text-xs font-semibold">Cetak</button> <button onclick="deletePerm(\''+noP+'\')" class="text-slate-400 text-xs">Hapus</button>'}}
             var acC=idx===0?'<td rowspan="'+nbT+'"><div class="flex gap-1 flex-wrap">'+act+'</div></td>':'';
-            rows+='<tr class="'+cls+'">'+noC+npC+tgC+divC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tc">'+p.jumlah+'</td>'+stC+acC+'</tr>';
+            rows+='<tr class="'+cls+'">'+noC+npC+tgC+divC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+(it?it.satuan:'-')+'</td>'+qtyCell+stC+acC+'</tr>';
         });
     });
     document.getElementById('permintaan-tbody').innerHTML=rows||'<tr><td colspan="9" class="tc py-6 text-slate-400">Belum ada data</td></tr>';
@@ -645,10 +673,44 @@ function processToPemakaian(noP){
 function printPerm(noP){
     var items=DB.permintaan.filter(function(p){return p.noPermintaan===noP});
     if(!items.length){alert('Data tidak ditemukan');return}
-    var divisi=items[0].divisi||'............',yangMeminta=items[0].yangMeminta||'............',disetujui=items[0].disetujui||'............',tglCetak=fDLong(items[0].tanggal),keterangan=items[0].keterangan||'-',nbT=items.length,rows='';
-    items.forEach(function(p,idx){var it=DB.barang.find(function(b){return b.id===p.itemId});var ketC=idx===0?'<td rowspan="'+nbT+'" style="vertical-align:middle;text-align:left;font-size:9pt;padding-left:6px">'+keterangan+'</td>':'';rows+='<tr><td class="tc" style="font-weight:bold">'+(idx+1)+'</td><td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tc" style="font-weight:bold">'+p.jumlah+'</td>'+ketC+'</tr>'});
+    var divisi=items[0].divisi||'............',
+        yangMeminta=items[0].yangMeminta||'............',
+        disetujui=items[0].disetujui||'............',
+        tglCetak=fDLong(items[0].tanggal),
+        keterangan=items[0].keterangan||'-',
+        nbT=items.length,
+        processedToPm=items[0].processedToPm===true;
+
+    /* Hitung total qty pemakaian per itemId dari permintaan ini */
+    var pmQtyMap={};
+    if(processedToPm){
+        DB.pemakaian.forEach(function(pm){
+            if(pm.fromPermintaan===noP){
+                if(!pmQtyMap[pm.itemId])pmQtyMap[pm.itemId]=0;
+                pmQtyMap[pm.itemId]+=pm.jumlah;
+            }
+        });
+    }
+
+    var rows='';
+    items.forEach(function(p,idx){
+        var it=DB.barang.find(function(b){return b.id===p.itemId});
+        var ketText=idx===0?keterangan:'';
+
+        /* Jika sudah diproses dan jumlah tidak sesuai, tambahkan catatan otomatis */
+        if(processedToPm){
+            var pmQty=pmQtyMap[p.itemId]||0;
+            if(p.jumlah!==pmQty){
+                var separator=(ketText&&ketText!=='-')?' — ':'';
+                ketText = ketText + separator + '<small><i>Disetujui <b>' + pmQty + '<b></i></small>';
+            }
+        }
+
+        rows+='<tr><td class="tc" style="font-weight:bold">'+(idx+1)+'</td><td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+(it?it.satuan:'-')+'</td><td class="tc" style="font-weight:bold">'+p.jumlah+'</td><td style="text-align:left;font-size:9pt;padding-left:6px;vertical-align:middle">'+ketText+'</td></tr>';
+    });
+
     var logoUrl='https://z-cdn-media.chatglm.cn/files/b8bffa74-ccd7-43df-ac0a-7d38232e3901.png?auth_key=1872868863-b6cd966dc51a4c34aa738032b487a895-0-e6beed34fb7fb9a9650976366f590c26';
-    document.getElementById('print-content').innerHTML='<table style="width:100%;border-collapse:collapse;margin-bottom:10px"><tr><td style="width:75px;text-align:center;vertical-align:middle;padding-right:8px"><img src="'+logoUrl+'" style="width:65px;height:auto"></td><td style="text-align:left;vertical-align:middle"><div style="font-size:15pt;font-weight:bold;line-height:1.3">BADAN PUSAT STATISTIK</div><div style="font-size:13.5pt;line-height:1.3">KOTA PEKANBARU</div></td></tr></table><h2 style="text-align:center;font-weight:bold;font-size:14pt;text-decoration:underline;margin-top:20px;margin-bottom:15px;">FORM PERMINTAAN BARANG</h2><table style="width:100%;font-size:9pt;border-collapse:collapse;margin-bottom:8px"><tr><td style="width:85px;vertical-align:top;padding:0">Nomor</td><td style="width:8px;vertical-align:top;padding:0">:</td><td style="font-weight:bold;padding:0">'+noP+'</td></tr><tr><td style="vertical-align:top;padding:0">Tanggal</td><td style="vertical-align:top;padding:0">:</td><td style="padding:0">'+tglCetak+'</td></tr><tr><td style="vertical-align:top;padding:0">Divisi</td><td style="vertical-align:top;padding:0">:</td><td style="font-weight:bold;padding:0">'+divisi+'</td></tr></table><table class="bt"><colgroup><col style="width:7%"><col style="width:38%"><col style="width:12%"><col style="width:10%"><col style="width:33%"></colgroup><thead><tr><th>No</th><th>Nama Barang</th><th>Satuan</th><th>Jumlah</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin-top:35px"><table style="width:100%;font-size:9pt;text-align:center;border-collapse:collapse"><tr style="vertical-align:top"><td style="width:50%"><div style="margin-bottom:50px">Disetujui Oleh,</div><div style="font-size:10pt;font-weight:bold;text-decoration:underline">'+disetujui+'</div></td><td style="width:50%"><div style="margin-bottom:50px">Yang Meminta,</div><div style="font-size:10pt;font-weight:bold;text-decoration:underline">'+yangMeminta+'</div></td></tr></table></div>';
+    document.getElementById('print-content').innerHTML='<table style="width:100%;border-collapse:collapse;margin-bottom:10px"><tr><td style="width:75px;text-align:center;vertical-align:middle;padding-right:8px"><img src="'+logoUrl+'" style="width:65px;height:auto"></td><td style="text-align:left;vertical-align:middle"><div style="font-size:15pt;font-weight:bold;line-height:1.3">BADAN PUSAT STATISTIK</div><div style="font-size:13.5pt;line-height:1.3">KOTA PEKANBARU</div></td></tr></table><h2 style="text-align:center;font-weight:bold;font-size:14pt;text-decoration:underline;margin-top:20px;margin-bottom:15px;">FORM PERMINTAAN BARANG</h2><table style="width:100%;font-size:9pt;border-collapse:collapse;margin-bottom:8px"><tr><td style="width:85px;vertical-align:top;padding:0">Nomor</td><td style="width:8px;vertical-align:top;padding:0">:</td><td style="font-weight:bold;padding:0">'+noP+'</td></tr><tr><td style="vertical-align:top;padding:0">Tanggal</td><td style="vertical-align:top;padding:0">:</td><td style="padding:0">'+tglCetak+'</td></tr><tr><td style="vertical-align:top;padding:0">Divisi</td><td style="vertical-align:top;padding:0">:</td><td style="font-weight:bold;padding:0">'+divisi+'</td></tr></table><table class="bt"><colgroup><col style="width:7%"><col style="width:35%"><col style="width:12%"><col style="width:10%"><col style="width:36%"></colgroup><thead><tr><th>No</th><th>Nama Barang</th><th>Satuan</th><th>Jumlah</th><th>Keterangan</th></tr></thead><tbody>'+rows+'</tbody></table><div style="margin-top:35px"><table style="width:100%;font-size:9pt;text-align:center;border-collapse:collapse"><tr style="vertical-align:top"><td style="width:50%"><div style="margin-bottom:50px">Disetujui Oleh,</div><div style="font-size:10pt;font-weight:bold;text-decoration:underline">'+disetujui+'</div></td><td style="width:50%"><div style="margin-bottom:50px">Yang Meminta,</div><div style="font-size:10pt;font-weight:bold;text-decoration:underline">'+yangMeminta+'</div></td></tr></table></div>';
     document.getElementById('print-title').innerText='Form Permintaan Barang';openPrintModal();
 }
 
