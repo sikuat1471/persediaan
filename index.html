@@ -907,7 +907,7 @@ function showPage(page){
     var submenuMap={'stock':'stock-submenu','opname':'stock-submenu','barang':'ref-submenu','backup':'ref-submenu','saldoawal':'masuk-submenu','pembelian':'masuk-submenu','transfer':'masuk-submenu','pemakaian':'keluar-submenu'};
     var targetSub=submenuMap[page];
     if(targetSub){var subEl=document.getElementById(targetSub);if(subEl)subEl.classList.remove('hidden');var parentDiv=subEl?subEl.parentElement:null;if(parentDiv){var arrow=parentDiv.querySelector('.nav-parent-arrow');if(arrow)arrow.classList.add('open')}}
-    var tm={'dashboard':'BPS kota Pekanbaru','stock':'Daftar Stock','opname':'Opname Fisik','barang':'Mengelola Barang','backup':'Backup Data','saldoawal':'Saldo Awal','pembelian':'Pembelian','transfer':'Transfer Masuk','pemakaian':'Pemakaian','permintaan':'Form Permintaan','kartu':'Kartu Kendali','laporan':'Cetak Laporan'};
+    var tm={'dashboard':'BPS Kota Pekanbaru','stock':'Daftar Stock','opname':'Opname Fisik','barang':'Mengelola Barang','backup':'Backup Data','saldoawal':'Saldo Awal','pembelian':'Pembelian','transfer':'Transfer Masuk','pemakaian':'Pemakaian','permintaan':'Form Permintaan','kartu':'Kartu Kendali','laporan':'Cetak Laporan'};
     document.title=(tm[page]||'SIPEDANG')+' - SIPEDANG';
     document.querySelectorAll('.page-content').forEach(function(p){p.classList.add('hidden')});
     document.getElementById('page-'+page).classList.remove('hidden');
