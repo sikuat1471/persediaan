@@ -517,7 +517,6 @@ function loadPermTb(){
         var items=DB.permintaan.filter(function(p){return p.noPermintaan===noP}).sort(function(a,b){return a.id-b.id});
         var status=items[0].status||'Menunggu',processedToPm=items[0].processedToPm===true;
 
-        /* PERUBAHAN: Jika sudah diproses ke pemakaian, tampilkan status "Selesai" */
         var displayStatus=status,sc='status-menunggu';
         if(processedToPm){
             displayStatus='Selesai';
@@ -531,6 +530,13 @@ function loadPermTb(){
         var tg=fD(items[0].tanggal),nbT=items.length;
         var divisi=items[0].divisi||'-',yangMeminta=items[0].yangMeminta||'-',disetujui=items[0].disetujui||'-';
 
+        /* PERBAIKAN: Hitung TOTAL permintaan per itemId (gabungan semua baris yang itemId-nya sama) */
+        var permQtyMap={};
+        items.forEach(function(p){
+            if(!permQtyMap[p.itemId])permQtyMap[p.itemId]=0;
+            permQtyMap[p.itemId]+=p.jumlah;
+        });
+
         /* Hitung total qty pemakaian per itemId dari permintaan ini */
         var pmQtyMap={};
         if(processedToPm){
@@ -542,6 +548,9 @@ function loadPermTb(){
             });
         }
 
+        /* PERBAIKAN: Track itemId mana saja yang sudah ditampilkan indikator mismatch-nya */
+        var shownMismatch={};
+
         items.forEach(function(p,idx){
             var it=DB.barang.find(function(b){return b.id===p.itemId}),cls=idx===0?' nb-group-start nb-border-top':'';
             var noC=idx===0?'<td class="tc font-medium" rowspan="'+nbT+'">'+nbIdx+'</td>':'';
@@ -549,17 +558,22 @@ function loadPermTb(){
             var tgC=idx===0?'<td class="tc" rowspan="'+nbT+'">'+tg+'</td>':'';
             var divC=idx===0?'<td rowspan="'+nbT+'" style="font-size:10.5px;color:#475569">'+divisi+'</td>':'';
 
-            /* PERUBAHAN: Tidak ada badge "Diproses" lagi, cukup teks status "Selesai" */
             var stC=idx===0?'<td class="tc" rowspan="'+nbT+'"><span class="px-2 py-0.5 rounded-full text-xs font-semibold '+sc+'">'+displayStatus+'</span></td>':'';
 
+            /* PERBAIKAN: Bandingkan TOTAL per itemId (permQtyMap vs pmQtyMap), bukan per baris */
             var qtyCell='';
             if(processedToPm){
+                var totalPermQty=permQtyMap[p.itemId]||0;
                 var pmQty=pmQtyMap[p.itemId]||0;
-                if(p.jumlah!==pmQty){
-                    var selisih=p.jumlah-pmQty;
+
+                if(totalPermQty!==pmQty && !shownMismatch[p.itemId]){
+                    /* Tampilkan indikator mismatch HANYA DI BARIS PERTAMA untuk itemId ini */
+                    shownMismatch[p.itemId]=true;
+                    var selisih=totalPermQty-pmQty;
                     var selisihTxt=selisih>0?'kurang '+selisih:'lebih '+Math.abs(selisih);
-                    qtyCell='<td class="tc" style="background:#FEE2E2;padding:2px 4px;vertical-align:middle" title="Di pemakaian: '+pmQty+' — selisih ('+selisihTxt+')"><div style="color:#DC2626;font-weight:800;font-size:12px;line-height:1.2">'+p.jumlah+'</div><div style="color:#991B1B;font-size:8px;font-weight:600;font-style:italic;line-height:1.1;margin-top:1px">Disetujui ('+pmQty+')</div></td>';
+                    qtyCell='<td class="tc" style="background:#FEE2E2;padding:2px 4px;vertical-align:middle" title="Total permintaan: '+totalPermQty+', Di pemakaian: '+pmQty+' — selisih ('+selisihTxt+')"><div style="color:#DC2626;font-weight:800;font-size:12px;line-height:1.2">'+p.jumlah+'</div><div style="color:#991B1B;font-size:8px;font-weight:600;font-style:italic;line-height:1.1;margin-top:1px">Diproses '+pmQty+'/'+totalPermQty+'</div></td>';
                 }else{
+                    /* Baris normal (baik sama maupun baris ke-2, ke-3 dst untuk itemId yang sama) */
                     qtyCell='<td class="tc">'+p.jumlah+'</td>';
                 }
             }else{
@@ -569,7 +583,9 @@ function loadPermTb(){
             var act='';
             if(isA&&idx===0){
                 if(status==='Menunggu'){act='<button onclick="approvePerm(\''+noP+'\')" class="text-green-600 text-xs font-semibold">Setuju</button> <button onclick="rejectPerm(\''+noP+'\')" class="text-red-500 text-xs font-semibold">Tolak</button> <button onclick="editPerm(\''+noP+'\')" class="text-bps-navy text-xs font-semibold">Edit</button> <button onclick="deletePerm(\''+noP+'\')" class="text-slate-400 text-xs">Hapus</button>'}
-                else{act='<button onclick="printPerm(\''+noP+'\')" class="text-bps-navy text-xs font-semibold">Cetak</button> <button onclick="deletePerm(\''+noP+'\')" class="text-slate-400 text-xs">Hapus</button>'}}
+                else if(processedToPm){act='<button onclick="printPerm(\''+noP+'\')" class="text-bps-navy text-xs font-semibold">Cetak</button>'}
+                else{act='<button onclick="printPerm(\''+noP+'\')" class="text-bps-navy text-xs font-semibold">Cetak</button> <button onclick="deletePerm(\''+noP+'\')" class="text-slate-400 text-xs">Hapus</button>'}
+            }
             var acC=idx===0?'<td rowspan="'+nbT+'"><div class="flex gap-1 flex-wrap">'+act+'</div></td>':'';
             rows+='<tr class="'+cls+'">'+noC+npC+tgC+divC+'<td>'+(it?it.deskripsi:'-')+'</td><td class="tc">'+(it?it.satuan:'-')+'</td>'+qtyCell+stC+acC+'</tr>';
         });
@@ -658,7 +674,18 @@ function approvePerm(noP){
     }
 }
 function rejectPerm(noP){if(confirm('Tolak permintaan '+noP+'?')){DB.permintaan.forEach(function(p){if(p.noPermintaan===noP)p.status='Ditolak'});saveDB();loadPermTb()}}
-function deletePerm(noP){if(confirm('Hapus permintaan '+noP+'?')){DB.permintaan=DB.permintaan.filter(function(p){return p.noPermintaan!==noP});saveDB();loadPermTb()}}
+function deletePerm(noP){
+    var items=DB.permintaan.filter(function(p){return p.noPermintaan===noP});
+    if(!items.length)return;
+    if(items[0].processedToPm===true){
+        alert('Permintaan '+noP+' tidak dapat dihapus.\nStatus sudah Selesai — barang telah diproses ke pemakaian.');
+        return;
+    }
+    if(confirm('Hapus permintaan '+noP+'?')){
+        DB.permintaan=DB.permintaan.filter(function(p){return p.noPermintaan!==noP});
+        saveDB();loadPermTb();
+    }
+}
 
 /* ==================== PROSES KE PEMAKAIAN ==================== */
 function processToPemakaian(noP){
