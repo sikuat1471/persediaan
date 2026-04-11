@@ -461,7 +461,7 @@ function showApp(){document.getElementById('login-screen').classList.add('hidden
 
 /* ==================== DATABASE ==================== */
 var DB={barang:[],saldoAwal:[],pembelian:[],transfer:[],pemakaian:[],permintaan:[],fifoQueue:{}};
-var CRT='masuk',saC=0,pbC=0,tfC=0,pmC=0,permC=0,pmEditBackup=null,pmSourcePermNo='',_lastTopbarNotifCount=0,basoCensusC=0;
+var CRT='masuk',saC=0,pbC=0,tfC=0,pmC=0,permC=0,pmEditBackup=null,pmSourcePermNo='',_lastTopbarNotifCount=0,basoCensusC=0,basoRefDate=null;
 
 function loadDB(){var s=localStorage.getItem('persediaan_db_v2');if(s){DB=JSON.parse(s);if(!DB.saldoAwal)DB.saldoAwal=[];if(!DB.fifoQueue)DB.fifoQueue={};if(!DB.permintaan)DB.permintaan=[];DB.saldoAwal.forEach(function(sa,i){if(!sa.noBukti)sa.noBukti='SA-'+String(i+1).padStart(3,'0')});buildFIFO()}else{initSampleData()}}
 function saveDB(){localStorage.setItem('persediaan_db_v2',JSON.stringify(DB))}
@@ -558,7 +558,38 @@ function getAvgHargaUntil(itemId,untilDate){var q=buildFifoUntil(itemId,untilDat
 function basoGetStock(id){return basoRefDate?getStockUntil(id,basoRefDate):getStock(id)}
 function basoGetAvgHarga(id){return basoRefDate?getAvgHargaUntil(id,basoRefDate):getAvgHarga(id)}
 function hitungHariBaso(){var tgl=document.getElementById('baso-tgl').value.trim(),bln=document.getElementById('baso-bln').value,thn=document.getElementById('baso-thn').value.trim(),el=document.getElementById('baso-hari');if(!tgl||!bln||!thn||isNaN(tgl)||isNaN(thn)){el.value='';return}var blnMap={'Januari':0,'Februari':1,'Maret':2,'April':3,'Mei':4,'Juni':5,'Juli':6,'Agustus':7,'September':8,'Oktober':9,'November':10,'Desember':11};var hariArr=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];var dt=new Date(parseInt(thn),blnMap[bln]||0,parseInt(tgl));if(dt.getDate()!==parseInt(tgl)){el.value='Tanggal tidak valid';return}el.value=hariArr[dt.getDay()]}
-function loadBasoData(){document.getElementById('baso-hari').value='Rabu';document.getElementById('baso-tgl').value='Tiga Puluh Satu';document.getElementById('baso-bln').value='Desember';document.getElementById('baso-thn').value='Dua Ribu Dua Puluh Lima';document.getElementById('baso-kpb-nama').value='Guswandi, SST';document.getElementById('baso-kpb-nip').value='198503252009021003';document.getElementById('baso-pp-nama').value='I Putu Diastudi';document.getElementById('baso-pp-nip').value='197504272007101001';basoCensusC=0;var basoRefDate=null;var basoRefDate=document.getElementById('baso-tgl-ttd').value||null;basoCensusC=0;var basoItems=DB.barang.filter(function(b){return basoGetStock(b.id)>0});var tbody=document.getElementById('baso-tbody');tbody.innerHTML='';if(!basoItems.length){tbody.innerHTML='<tr><td colspan="10" class="tc py-8 text-slate-400">Tidak ada barang dengan stok lebih dari 0</td></tr>';return}/* Baris header Persediaan Reguler */var hdrReg='<tr class="baso-section-header"><td colspan="10">PERSEDIAAN REGULER</td></tr>';tbody.innerHTML=hdrReg;basoItems.forEach(function(b,i){var stk=basoGetStock(b.id),avgH=basoGetAvgHarga(b.id),total=stk*avgH;var tr=document.createElement('tr');tr.innerHTML='<td class="tc">'+(i+1)+'</td><td class="font-medium text-slate-800">'+b.kode+'</td><td>'+b.deskripsi+'</td><td class="tc">'+b.satuan+'</td><td class="tr">'+(avgH?fN(avgH):'-')+'</td><td><input type="number" class="input-field py-1 w-16 tc" id="baso-j-'+b.id+'" value="'+stk+'" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr font-semibold" id="baso-t-'+b.id+'">'+(total?fN(total):'-')+'</td><td><input type="number" class="input-field py-1 w-14 tc" id="baso-r-'+b.id+'" value="0" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr" id="baso-rt-'+b.id+'">-</td><td><input type="number" class="input-field py-1 w-14 tc" id="baso-u-'+b.id+'" value="0" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr" id="baso-ut-'+b.id+'">-</td>';tbody.appendChild(tr)});/* Baris header Sisa Kegiatan Sensus dan Survey */var hdrCensus='<tr class="baso-section-header"><td colspan="10">SISA KEGIATAN SENSUS DAN SURVEY</td></tr>';tbody.insertAdjacentHTML('beforeend',hdrCensus);/* 3 baris kosong isian */for(var c=0;c<3;c++){addBasoCensusRowInternal(c+1)}}
+function loadBasoData(){
+    document.getElementById('baso-hari').value='Rabu';
+    document.getElementById('baso-tgl').value='Tiga Puluh Satu';
+    document.getElementById('baso-bln').value='Desember';
+    document.getElementById('baso-thn').value='Dua Ribu Dua Puluh Lima';
+    document.getElementById('baso-kpb-nama').value='Guswandi, SST';
+    document.getElementById('baso-kpb-nip').value='198503252009021003';
+    document.getElementById('baso-pp-nama').value='I Putu Diastudi';
+    document.getElementById('baso-pp-nip').value='197504272007101001';
+    basoCensusC=0;
+    basoRefDate=document.getElementById('baso-tgl-ttd').value||null;
+    var basoItems=DB.barang.filter(function(b){return basoGetStock(b.id)>0});
+    var tbody=document.getElementById('baso-tbody');
+    tbody.innerHTML='';
+    if(!basoItems.length){
+        tbody.innerHTML='<tr><td colspan="10" class="tc py-8 text-slate-400">Tidak ada barang dengan stok lebih dari 0</td></tr>';
+        return;
+    }
+    var hdrReg='<tr class="baso-section-header"><td colspan="10">PERSEDIAAN REGULER</td></tr>';
+    tbody.innerHTML=hdrReg;
+    basoItems.forEach(function(b,i){
+        var stk=basoGetStock(b.id),avgH=basoGetAvgHarga(b.id),total=stk*avgH;
+        var tr=document.createElement('tr');
+        tr.innerHTML='<td class="tc">'+(i+1)+'</td><td class="font-medium text-slate-800">'+b.kode+'</td><td>'+b.deskripsi+'</td><td class="tc">'+b.satuan+'</td><td class="tr">'+(avgH?fN(avgH):'-')+'</td><td><input type="number" class="input-field py-1 w-16 tc" id="baso-j-'+b.id+'" value="'+stk+'" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr font-semibold" id="baso-t-'+b.id+'">'+(total?fN(total):'-')+'</td><td><input type="number" class="input-field py-1 w-14 tc" id="baso-r-'+b.id+'" value="0" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr" id="baso-rt-'+b.id+'">-</td><td><input type="number" class="input-field py-1 w-14 tc" id="baso-u-'+b.id+'" value="0" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr" id="baso-ut-'+b.id+'">-</td>';
+        tbody.appendChild(tr);
+    });
+    var hdrCensus='<tr class="baso-section-header"><td colspan="10">SISA KEGIATAN SENSUS DAN SURVEY</td></tr>';
+    tbody.insertAdjacentHTML('beforeend',hdrCensus);
+    for(var c=0;c<3;c++){
+        addBasoCensusRowInternal(c+1);
+    }
+}
 function addBasoCensusRowInternal(num){basoCensusC++;var tbody=document.getElementById('baso-tbody');var tr=document.createElement('tr');tr.className='baso-census-row';tr.id='baso-census-'+basoCensusC;tr.innerHTML='<td class="tc" style="font-weight:600">'+num+'</td><td><input type="text" class="input-field py-1" id="baso-cn-'+basoCensusC+'" placeholder="Uraian barang..."></td><td><input type="text" class="input-field py-1 tc" id="baso-cs-'+basoCensusC+'" placeholder="Satuan"></td><td><input type="number" class="input-field py-1 tr" id="baso-ch-'+basoCensusC+'" value="0" min="0" oninput="calcBasoCensusRow('+basoCensusC+')"></td><td><input type="number" class="input-field py-1 tc w-16" id="baso-cj-'+basoCensusC+'" value="0" min="0" oninput="calcBasoCensusRow('+basoCensusC+')"></td><td class="tr font-semibold" id="baso-ct-'+basoCensusC+'">-</td><td><input type="number" class="input-field py-1 tc w-14" id="baso-cr-'+basoCensusC+'" value="0" min="0" oninput="calcBasoCensusRow('+basoCensusC+')"></td><td class="tr" id="baso-crt-'+basoCensusC+'">-</td><td><input type="number" class="input-field py-1 tc w-14" id="baso-cu-'+basoCensusC+'" value="0" min="0" oninput="calcBasoCensusRow('+basoCensusC+')"></td><td class="tr" id="baso-cut-'+basoCensusC+'">-</td>';tbody.appendChild(tr)}
 function addBasoCensusRow(){/* Hitung jumlah baris census saat ini */var censusRows=document.querySelectorAll('#baso-tbody .baso-census-row');var nextNum=censusRows.length+1;addBasoCensusRowInternal(nextNum)}
 function calcBasoRow(itemId){var avgH=basoGetAvgHarga(itemId),j=parseInt(document.getElementById('baso-j-'+itemId).value)||0,r=parseInt(document.getElementById('baso-r-'+itemId).value)||0,u=parseInt(document.getElementById('baso-u-'+itemId).value)||0;document.getElementById('baso-t-'+itemId).textContent=j>0&&avgH>0?fN(j*avgH):'-';document.getElementById('baso-rt-'+itemId).textContent=r>0&&avgH>0?fN(r*avgH):'-';document.getElementById('baso-ut-'+itemId).textContent=u>0&&avgH>0?fN(u*avgH):'-'}
