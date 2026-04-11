@@ -579,11 +579,11 @@ function loadBasoData(){
     var hdrReg='<tr class="baso-section-header"><td colspan="10">PERSEDIAAN REGULER</td></tr>';
     tbody.innerHTML=hdrReg;
     basoItems.forEach(function(b,i){
-        var stk=basoGetStock(b.id),avgH=basoGetAvgHarga(b.id),total=stk*avgH;
-        var tr=document.createElement('tr');
-        tr.innerHTML='<td class="tc">'+(i+1)+'</td><td class="font-medium text-slate-800">'+b.kode+'</td><td>'+b.deskripsi+'</td><td class="tc">'+b.satuan+'</td><td class="tr">'+(avgH?fN(avgH):'-')+'</td><td><input type="number" class="input-field py-1 w-16 tc" id="baso-j-'+b.id+'" value="'+stk+'" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr font-semibold" id="baso-t-'+b.id+'">'+(total?fN(total):'-')+'</td><td><input type="number" class="input-field py-1 w-14 tc" id="baso-r-'+b.id+'" value="0" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr" id="baso-rt-'+b.id+'">-</td><td><input type="number" class="input-field py-1 w-14 tc" id="baso-u-'+b.id+'" value="0" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr" id="baso-ut-'+b.id+'">-</td>';
-        tbody.appendChild(tr);
-    });
+    var stk=basoGetStock(b.id),avgH=basoGetAvgHarga(b.id),total=stk*avgH;
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td class="tc">'+(i+1)+'</td><td class="font-medium text-slate-800">'+b.deskripsi+'</td><td class="tc">'+b.satuan+'</td><td class="tr">'+(avgH?fN(avgH):'-')+'</td><td><input type="number" class="input-field py-1 w-16 tc" id="baso-j-'+b.id+'" value="'+stk+'" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr font-semibold" id="baso-t-'+b.id+'">'+(total?fN(total):'-')+'</td><td><input type="number" class="input-field py-1 w-14 tc" id="baso-r-'+b.id+'" value="0" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr" id="baso-rt-'+b.id+'">-</td><td><input type="number" class="input-field py-1 tc w-14" id="baso-u-'+b.id+'" value="0" min="0" oninput="calcBasoRow('+b.id+')"></td><td class="tr" id="baso-ut-'+b.id+'">-</td>';
+    tbody.appendChild(tr);
+});
     var hdrCensus='<tr class="baso-section-header"><td colspan="10">SISA KEGIATAN SENSUS DAN SURVEY</td></tr>';
     tbody.insertAdjacentHTML('beforeend',hdrCensus);
     for(var c=0;c<3;c++){
