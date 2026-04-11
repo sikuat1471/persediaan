@@ -764,7 +764,72 @@ function loadOpnameData(){document.getElementById('opname-tanggal').value=today(
 function calcSelisih(inp){var row=inp.closest('tr'),sb=parseInt(row.cells[4].innerText),sf=parseInt(inp.value)||0,sel=sf-sb,sc=row.querySelector('.selisih-cell');sc.innerText=sel;sc.className='tc font-bold selisih-cell'+(sel<0?' text-red-600':sel>0?' text-green-600':'')}
 
 /* ==================== KARTU KENDALI ==================== */
-function loadKartuKendali(){var tb=document.getElementById('kartu-tbody'),id=parseInt(document.getElementById('kartu-barang').value);if(!id){tb.innerHTML='<tr><td colspan="7" class="tc py-6 text-slate-400">Pilih barang terlebih dahulu</td></tr>';return}var bv=document.getElementById('kartu-bulan').value,tv=document.getElementById('kartu-tahun').value,trs=[];DB.saldoAwal.filter(function(sa){return sa.itemId===id}).forEach(function(sa){trs.push({tgl:sa.tanggal,ur:'Saldo Awal',m:sa.jumlah,k:0,ket:sa.keterangan||'Stok awal',sd:new Date(sa.tanggal)})});DB.pembelian.filter(function(p){return p.itemId===id}).forEach(function(p){trs.push({tgl:p.tanggal,ur:'Pembelian - '+p.noBukti,m:p.jumlah,k:0,ket:p.keterangan,sd:new Date(p.tanggal)})});DB.transfer.filter(function(t){return t.itemId===id}).forEach(function(t){trs.push({tgl:t.tanggal,ur:'Transfer Masuk - '+t.noBukti,m:t.jumlah,k:0,ket:t.keterangan,sd:new Date(t.tanggal)})});DB.pemakaian.filter(function(p){return p.itemId===id}).forEach(function(p){trs.push({tgl:p.tanggal,ur:'Pemakaian - '+p.noBukti,m:0,k:p.jumlah,ket:p.keterangan,sd:new Date(p.tanggal)})});trs.sort(function(a,b){return a.sd-b.sd});var disp=[],ob=0,no=1,odS='-';if(bv&&tv){var stD=new Date(parseInt(tv),parseInt(bv)-1,1),enD=new Date(parseInt(tv),parseInt(bv),0,23,59,59);odS=fD(stD);trs.forEach(function(t){if(t.sd<stD)ob+=(t.m-t.k)});trs.forEach(function(t){if(t.sd>=stD&&t.sd<=enD)disp.push(t)})}elsedisp=trs;var sisa=ob,rows='';if(bv&&tv){var bN=document.getElementById('kartu-bulan').options[document.getElementById('kartu-bulan').selectedIndex].text;rows+='<tr style="background:#F0F4FA;font-weight:600"><td class="tc">'+(no++)+'</td><td class="tc">'+odS+'</td><td>Saldo Awal</td><td class="tc" style="color:var(--navy-dark)">-</td><td class="tc text-red-500">-</td><td class="tc font-bold">'+sisa+'</td><td>Per 1 '+bN+' '+tv+'</td></tr>'}disp.forEach(function(t){sisa+=t.m-t.k;rows+='<tr><td class="tc">'+(no++)+'</td><td class="tc">'+fD(t.tgl)+'</td><td>'+t.ur+'</td><td class="tc font-medium" style="color:var(--navy-dark)">'+(t.m||'-')+'</td><td class="tc text-red-500 font-medium">'+(t.k||'-')+'</td><td class="tc font-bold text-slate-800">'+sisa+'</td><td>'+(t.ket||'-')+'</td></tr>'});tb.innerHTML=rows}
+function loadKartuKendali(){
+    var tb=document.getElementById('kartu-tbody');
+    var id=parseInt(document.getElementById('kartu-barang').value);
+    if(!id){
+        tb.innerHTML='<tr><td colspan="7" class="tc py-6 text-slate-400">Pilih barang terlebih dahulu</td></tr>';
+        return;
+    }
+    var bv=document.getElementById('kartu-bulan').value;
+    var tv=document.getElementById('kartu-tahun').value;
+    var trs=[];
+
+    DB.saldoAwal.filter(function(sa){return sa.itemId===id}).forEach(function(sa){
+        trs.push({tgl:sa.tanggal,ur:'Saldo Awal',m:sa.jumlah,k:0,ket:sa.keterangan||'Stok awal',sd:new Date(sa.tanggal)});
+    });
+    DB.pembelian.filter(function(p){return p.itemId===id}).forEach(function(p){
+        trs.push({tgl:p.tanggal,ur:'Pembelian - '+p.noBukti,m:p.jumlah,k:0,ket:p.keterangan||'-',sd:new Date(p.tanggal)});
+    });
+    DB.transfer.filter(function(t){return t.itemId===id}).forEach(function(t){
+        trs.push({tgl:t.tanggal,ur:'Transfer Masuk - '+t.noBukti,m:t.jumlah,k:0,ket:t.keterangan||'-',sd:new Date(t.tanggal)});
+    });
+    DB.pemakaian.filter(function(p){return p.itemId===id}).forEach(function(p){
+        trs.push({tgl:p.tanggal,ur:'Pemakaian - '+p.noBukti,m:0,k:p.jumlah,ket:p.keterangan||'-',sd:new Date(p.tanggal)});
+    });
+
+    trs.sort(function(a,b){return a.sd-b.sd});
+
+    var disp=[];
+    var ob=0;
+    var no=1;
+    var showOpeningRow=false;
+    var periodeText='';
+    var odS='-';
+
+    if(bv!==''&&tv!==''){
+        showOpeningRow=true;
+        var stD=new Date(parseInt(tv),parseInt(bv)-1,1);
+        var enD=new Date(parseInt(tv),parseInt(bv),0,23,59,59);
+        odS=fD(stD);
+        var bN=document.getElementById('kartu-bulan').options[document.getElementById('kartu-bulan').selectedIndex].text;
+        periodeText='Per 1 '+bN+' '+tv;
+        for(var x=0;x<trs.length;x++){if(trs[x].sd<stD)ob+=(trs[x].m-trs[x].k)}
+        for(var x=0;x<trs.length;x++){if(trs[x].sd>=stD&&trs[x].sd<=enD)disp.push(trs[x])}
+    }else{
+        disp=trs.slice();
+    }
+
+    if(!disp.length){
+        tb.innerHTML='<tr><td colspan="7" class="tc py-8 text-slate-400">Tidak ada transaksi untuk barang ini</td></tr>';
+        return;
+    }
+
+    var sisa=ob;
+    var rows='';
+
+    if(showOpeningRow){
+        rows+='<tr style="background:#F0F4FA;font-weight:600"><td class="tc">'+(no++)+'</td><td class="tc">'+odS+'</td><td>Saldo Awal</td><td class="tc" style="color:var(--navy-dark)">-</td><td class="tc text-red-500">-</td><td class="tc font-bold">'+sisa+'</td><td>'+periodeText+'</td></tr>';
+    }
+
+    for(var i=0;i<disp.length;i++){
+        var t=disp[i];
+        sisa+=t.m-t.k;
+        rows+='<tr><td class="tc">'+(no++)+'</td><td class="tc">'+fD(t.tgl)+'</td><td>'+t.ur+'</td><td class="tc font-medium" style="color:var(--navy-dark)">'+(t.m||'-')+'</td><td class="tc text-red-500 font-medium">'+(t.k||'-')+'</td><td class="tc font-bold text-slate-800">'+sisa+'</td><td>'+(t.ket||'-')+'</td></tr>';
+    }
+
+    tb.innerHTML=rows;
+}
 function openKartuPrintModal(){if(!parseInt(document.getElementById('kartu-barang').value)){alert('Pilih barang dulu');return}var bv=document.getElementById('kartu-bulan').value,tv=document.getElementById('kartu-tahun').value,tgl;if(bv&&tv){var ld=new Date(parseInt(tv),parseInt(bv),0);tgl=ld.getFullYear()+'-'+String(ld.getMonth()+1).padStart(2,'0')+'-'+String(ld.getDate()).padStart(2,'0')}else{tgl=today()}document.getElementById('kartu-sig-tanggal').value=tgl;document.getElementById('kartu-sig-pengelola').value='I Putu Diastudi';document.getElementById('kartu-sig-pengelola-nip').value='197504272007101001';document.getElementById('kartu-sig-mengetahui').value='Wahyu Adhiputra, SST';document.getElementById('kartu-sig-mengetahui-nip').value='198611092010121008';openModal('kartu-print-modal')}
 
 /* ==================== MODAL ==================== */
