@@ -283,20 +283,19 @@
         </aside>
 
         <main class="flex-1 ml-64" id="main-content">
-            <div class="topbar no-print">
-                <div class="topbar-accent"></div>
-                <span style="position:absolute;left:45%;transform:translateX(-50%);font-weight:800;font-size:20px;letter-spacing:1.5px;color:rgb(5,5,123);text-transform:uppercase;white-space:nowrap">INVENTARISASI PERSEDIAAN</span>
-                <div class="topbar-user-section">
-                    <div class="topbar-notif" id="topbar-notif-btn" onclick="handleTopbarNotifClick()" title="Notifikasi Permintaan Barang">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
-                        </svg>
-                        <span class="topbar-notif-badge hidden" id="topbar-notif-badge">0</span>
-                    </div>
-                    <span class="text-xs text-slate-500">Login sebagai: <strong id="logged-user-top" class="text-bps-navy">-</strong></span>
-                </div>
-                <button onclick="handleLogout()" class="btn-logout"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>Logout</button>
-            </div>
+            <div class="topbar no-print" style="background-color:#007fff">
+    <div class="topbar-user-section">
+        <div class="topbar-notif" id="topbar-notif-btn" onclick="handleTopbarNotifClick()" title="Notifikasi Permintaan Barang">
+            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
+            </svg>
+            <span class="topbar-notif-badge hidden" id="topbar-notif-badge">0</span>
+        </div>
+        <span class="text-xs text-white">Login sebagai: <strong id="logged-user-top" class="text-bps-navy">-</strong></span>
+    </div>
+    <span style="position:absolute;left:45%;transform:translateX(-50%);font-weight:800;font-size:20px;letter-spacing:1.5px;color:rgb(251, 251, 254);text-transform:uppercase;white-space:nowrap">INVENTARISASI PERSEDIAAN</span>
+    <button onclick="handleLogout()" class="btn-logout"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>Logout</button>
+</div>
 
             <div class="p-6" style="background:var(--bg-primary)">
 
