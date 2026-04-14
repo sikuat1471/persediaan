@@ -430,6 +430,30 @@
             border: 1px solid #CBD5E1;
             background: #fff;
         }
+        #page-baso {
+    max-height: calc(100vh - 88px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 20px;
+    scroll-behavior: smooth;
+}
+#page-baso::-webkit-scrollbar { width: 6px; }
+#page-baso::-webkit-scrollbar-track { background: #F1F5F9; border-radius: 3px; }
+#page-baso::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+#page-baso::-webkit-scrollbar-thumb:hover { background: var(--accent-bps); }
+.baso-sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-primary);
+}
+.baso-sticky-top .baso-gov-header {
+    box-shadow: 0 4px 18px rgba(0,0,0,0.2);
+    border-radius: 0 0 8px 8px;
+}
+.baso-sticky-top .baso-gov-header::after {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
         #page-baso .data-table {
             border: none;
             border-radius: 0;
@@ -614,6 +638,7 @@
 
                 <!-- ========== BASO (GOV STYLE) ========== -->
                 <div id="page-baso" class="page-content hidden">
+                    <div class="baso-sticky-top">
                     <div class="flex justify-between items-center mb-4">
                         <div>
                             <h2 class="font-display text-xl font-bold text-bps-navy mb-0.5">BASO</h2>
@@ -639,6 +664,7 @@
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                             Dokumen Resmi
                         </div>
+                    </div>
                     </div>
 
                     <!-- Form: Tanggal -->
