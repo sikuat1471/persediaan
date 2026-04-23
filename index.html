@@ -896,10 +896,37 @@ function getRemovedUsedItemsOnEdit(arr,nb,submittedIds){var cur=arr.filter(funct
 function nbExists(arr,nb,excludeNb){return arr.some(function(x){return x.noBukti===nb&&x.noBukti!==excludeNb})}
 function onKeluarNbChange(){var nb=document.getElementById('filter-keluar-select').value;if(nb){var item=DB.pemakaian.find(function(p){return p.noBukti===nb});if(item){document.getElementById('sig-tanggal').value=item.tanggal;var ket=(item.keterangan||'').trim(),sel=document.getElementById('sig-ditujukan');sel.value='';for(var i=0;i<sel.options.length;i++){if(sel.options[i].value.toLowerCase()===ket.toLowerCase()){sel.value=sel.options[i].value;break}}}}else{document.getElementById('sig-tanggal').value='';document.getElementById('sig-ditujukan').value=''}}
 
-/* ==================== DROPDOWNS ==================== */
-function loadDD(){var trxIds=new Set();DB.saldoAwal.forEach(function(x){trxIds.add(x.itemId)});DB.pembelian.forEach(function(x){trxIds.add(x.itemId)});DB.transfer.forEach(function(x){trxIds.add(x.itemId)});DB.pemakaian.forEach(function(x){trxIds.add(x.itemId)});var kartuOpts=DB.barang.filter(function(b){return trxIds.has(b.id)}).map(function(b){return'<option value="'+b.id+'">'+b.deskripsi+'</option>'}).join('');var ke=document.getElementById('kartu-barang');if(ke)ke.innerHTML='<option value="">-- Pilih --</option>'+kartuOpts}
-function makeOpts(){return DB.barang.map(function(b){return'<option value="'+b.id+'">'+b.deskripsi+'</option>'}).join('')}
-function makeAvailOpts(selId){var html=DB.barang.filter(function(b){return getStock(b.id)>0}).map(function(b){var sel=(b.id===selId)?' selected':'';return'<option value="'+b.id+'"'+sel+'>'+b.deskripsi+'</option>'}).join('');if(selId){var item=DB.barang.find(function(b){return b.id===selId});if(item&&getStock(selId)<=0)html+='<option value="'+selId+'" selected class="opt-habis">'+item.deskripsi+' (Stok Habis)</option>'}return html}
+/* ==================== DROPDOWNS (SUDAH DIURUTKAN A-Z) ==================== */
+function makeOpts(){
+    return DB.barang.slice().sort(function(a,b){return a.deskripsi.localeCompare(b.deskripsi,'id')}).map(function(b){
+        return'<option value="'+b.id+'">'+b.deskripsi+'</option>'
+    }).join('')
+}
+function makeAvailOpts(selId){
+    var html=DB.barang.filter(function(b){return getStock(b.id)>0}).slice().sort(function(a,b){return a.deskripsi.localeCompare(b.deskripsi,'id')}).map(function(b){
+        var sel=(b.id===selId)?' selected':'';
+        return'<option value="'+b.id+'"'+sel+'>'+b.deskripsi+'</option>'
+    }).join('');
+    if(selId){
+        var item=DB.barang.find(function(b){return b.id===selId});
+        if(item&&getStock(selId)<=0)html+='<option value="'+selId+'" selected class="opt-habis">'+item.deskripsi+' (Stok Habis)</option>'
+    }
+    return html
+}
+
+/* ==================== LOAD DROPDOWNS ==================== */
+function loadDD(){
+    var trxIds=new Set();
+    DB.saldoAwal.forEach(function(x){trxIds.add(x.itemId)});
+    DB.pembelian.forEach(function(x){trxIds.add(x.itemId)});
+    DB.transfer.forEach(function(x){trxIds.add(x.itemId)});
+    DB.pemakaian.forEach(function(x){trxIds.add(x.itemId)});
+    var kartuOpts=DB.barang.filter(function(b){return trxIds.has(b.id)}).slice().sort(function(a,b){return a.deskripsi.localeCompare(b.deskripsi,'id')}).map(function(b){
+        return'<option value="'+b.id+'">'+b.deskripsi+'</option>'
+    }).join('');
+    var ke=document.getElementById('kartu-barang');
+    if(ke)ke.innerHTML='<option value="">-- Pilih --</option>'+kartuOpts
+}
 
 /* ==================== TOPBAR NOTIFICATION BELL ==================== */
 function handleTopbarNotifClick(){var btn=document.getElementById('topbar-notif-btn');btn.classList.add('ring');setTimeout(function(){btn.classList.remove('ring')},700);showPage('pemakaian');setTimeout(function(){var container=document.getElementById('pm-notif-container');var headerEl=container.querySelector('.pm-notif-group-header');if(headerEl){var body=headerEl.nextElementSibling;var chevron=headerEl.querySelector('.pm-notif-chevron');if(body&&!body.classList.contains('open')){body.classList.add('open');if(chevron)chevron.classList.add('open')}container.scrollIntoView({behavior:'smooth',block:'start'})}},150)}
