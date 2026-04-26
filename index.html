@@ -914,19 +914,15 @@ function makeAvailOpts(selId){
     return html
 }
 function makePermBarangOpts(selId){
-    var html=DB.barang.filter(function(b){return getStock(b.id)>0}).slice().sort(function(a,b){return a.deskripsi.localeCompare(b.deskripsi,'id')}).map(function(b){
+    var html=DB.barang.slice().sort(function(a,b){return a.deskripsi.localeCompare(b.deskripsi,'id')}).map(function(b){
         var stk=getStock(b.id);
-        var label=b.deskripsi+' - '+stk+' '+b.satuan;
+        var label=stk>0?b.deskripsi+' - '+stk+' '+b.satuan:b.deskripsi;
         var sel=(b.id===selId)?' selected':'';
         return'<option value="'+b.id+'"'+sel+'>'+label+'</option>'
     }).join('');
-    if(selId){
-        var item=DB.barang.find(function(b){return b.id===selId});
-        if(item&&getStock(selId)<=0)html+='<option value="'+selId+'" selected class="opt-habis">'+item.deskripsi+' - 0 '+item.satuan+' (Stok Habis)</option>'
-    }
     return html
 }
-/* ==================== LOAD DROPDOWNS ==================== */
+    /* ==================== LOAD DROPDOWNS ==================== */
 function loadDD(){
     var trxIds=new Set();
     DB.saldoAwal.forEach(function(x){trxIds.add(x.itemId)});
